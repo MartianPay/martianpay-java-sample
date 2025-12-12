@@ -63,8 +63,8 @@ public class PayrollExample {
 
             // Query balance
             BalanceResponse balance = statsService.getBalance();
-            if (balance == null) {
-                System.out.println("✗ Failed to get balance");
+            if (balance == null || balance.getBalances() == null) {
+                System.out.println("✗ Failed to get balance or balance list is empty");
                 return;
             }
 
@@ -103,6 +103,13 @@ public class PayrollExample {
                 return;
             }
 
+            // Get appropriate test address for the selected network
+            String testAddress = getTestAddress(selectedNetwork);
+            if (testAddress == null) {
+                System.out.println("  No test address available for network: " + selectedNetwork);
+                return;
+            }
+
             long timestamp = System.nanoTime();
             String externalId = "ORDER-" + timestamp;
 
@@ -119,7 +126,7 @@ public class PayrollExample {
             item1.setPhone("+1234567890");
             item1.setCoin(selectedCoin);
             item1.setNetwork(selectedNetwork);
-            item1.setAddress("TN9RRaXkCFtTXRso2GdTZxSxxwufzxLQPP");
+            item1.setAddress(testAddress);
             item1.setAmount("0.1");
             item1.setPaymentMethod("normal");
             items.add(item1);
@@ -136,6 +143,30 @@ public class PayrollExample {
 
         } catch (IOException e) {
             System.out.println("✗ API Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets a test address for the specified network
+     */
+    private String getTestAddress(String network) {
+        switch (network) {
+            case "Solana Devnet":
+                return "9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g";
+            case "Ethereum Sepolia":
+                return "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
+            case "TRON Testnet Shasta":
+                return "TN9RRaXkCFtTXRso2GdTZxSxxwufzxLQPP";
+            case "BSC Test":
+                return "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
+            case "Algorand Test":
+                return "UWVYY2WRT5GY6R7F2XFQXQXQXQXQXQXQXQXQXQXQXQXQXQXQXQXQXQXQ";
+            case "Stellar Test":
+                return "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37";
+            case "Noble Test":
+                return "noble1qy3n5t6l8z7r5s2a9w3k8r7n2m4v9x8c6d5e3f2g1h0j9i8u7y6t5r4e3w2q1";
+            default:
+                return null;
         }
     }
 
