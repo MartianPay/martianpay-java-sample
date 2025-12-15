@@ -1,14 +1,7 @@
 package com.martianpay.examples;
 
-import com.martianpay.model.Customer;
-import com.martianpay.model.PaymentMethodCard;
+import com.martianpay.developer.*;
 import com.martianpay.sdk.CustomerService;
-import com.martianpay.sdk.CustomerService.CustomerCreateRequest;
-import com.martianpay.sdk.CustomerService.CustomerListRequest;
-import com.martianpay.sdk.CustomerService.CustomerListResponse;
-import com.martianpay.sdk.CustomerService.CustomerUpdateRequest;
-import com.martianpay.sdk.CustomerService.CustomerDeleteResponse;
-import com.martianpay.sdk.CustomerService.CustomerPaymentMethodListResponse;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -24,7 +17,7 @@ public class CustomerExample {
     private final Scanner scanner;
 
     public CustomerExample() {
-        this.customerService = new CustomerService(Common.API_KEY);
+        this.customerService = new CustomerService(Common.currentAPIKey);
         this.scanner = new Scanner(System.in);
     }
 
@@ -56,10 +49,9 @@ public class CustomerExample {
             // Update customer
             String newName = "John Updated";
             CustomerUpdateRequest updateRequest = new CustomerUpdateRequest();
-            updateRequest.setId(createResponse.getId());
             updateRequest.setName(newName);
 
-            Customer updateResponse = customerService.updateCustomer(updateRequest);
+            Customer updateResponse = customerService.updateCustomer(createResponse.getId(), updateRequest);
 
             System.out.println("✓ Customer Updated:");
             System.out.println("  ID: " + updateResponse.getId());
@@ -156,9 +148,9 @@ public class CustomerExample {
             System.out.println("  Created customer: " + createResponse.getId());
 
             // Delete it
-            CustomerDeleteResponse deleteResponse = customerService.deleteCustomer(createResponse.getId());
+            customerService.deleteCustomer(createResponse.getId());
 
-            System.out.println("✓ Customer Deleted: " + deleteResponse.getId());
+            System.out.println("✓ Customer Deleted: " + createResponse.getId());
 
         } catch (IOException e) {
             System.out.println("✗ API Error: " + e.getMessage());
@@ -178,7 +170,7 @@ public class CustomerExample {
         }
 
         try {
-            CustomerPaymentMethodListResponse response = customerService.listCustomerPaymentMethods(customerId);
+            PaymentMethodListResponse response = customerService.listCustomerPaymentMethods(customerId);
 
             System.out.println("✓ Found " + (response.getPaymentMethods() != null ?
                     response.getPaymentMethods().size() : 0) + " payment method(s)");

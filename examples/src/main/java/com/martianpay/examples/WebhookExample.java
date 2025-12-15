@@ -2,6 +2,7 @@ package com.martianpay.examples;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.martianpay.developer.Event;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -24,7 +25,7 @@ import java.util.Map;
 public class WebhookExample {
 
     private static final String WEBHOOK_SECRET = Common.WEBHOOK_SECRET;
-    private static final String MARTIANPAY_SIGNATURE_HEADER = "Martianpay-Signature";
+    private static final String MARTIANPAY_SIGNATURE_HEADER = Event.MARTIAN_PAY_SIGNATURE;
     private static final int PORT = 8080;
     private static final Gson gson = new Gson();
 
@@ -61,7 +62,7 @@ public class WebhookExample {
                 // Get signature from header
                 String signature = exchange.getRequestHeaders().getFirst(MARTIANPAY_SIGNATURE_HEADER);
                 if (signature == null || signature.isEmpty()) {
-                    System.out.println("✗ Missing Martianpay-Signature header");
+                    System.out.println("✗ Missing Martian-Pay-Signature header");
                     sendResponse(exchange, 400, createErrorResponse(400, "Missing signature header"));
                     return;
                 }
@@ -124,10 +125,17 @@ public class WebhookExample {
     /**
      * Verifies webhook signature and parses event
      */
-    private static WebhookEvent verifyAndParseWebhook(String payload, String signature) {
+    private static WebhookEvent verifyAndParseWebhook(String payload, String signatureHeader) {
         try {
+            // Parse signature header: "t=timestamp,v1=signature"
+            SignatureData sigData = parseSignatureHeader(signatureHeader);
+            if (sigData == null) {
+                System.out.println("✗ Invalid signature header format");
+                return null;
+            }
+
             // Verify HMAC signature
-            if (!verifySignature(payload, signature, WEBHOOK_SECRET)) {
+            if (!verifySignature(payload, sigData, WEBHOOK_SECRET)) {
                 return null;
             }
 
@@ -140,15 +148,72 @@ public class WebhookExample {
     }
 
     /**
-     * Verifies HMAC-SHA256 signature
+     * SignatureData holds parsed signature information
      */
-    private static boolean verifySignature(String payload, String signature, String secret) {
+    private static class SignatureData {
+        long timestamp;
+        String signature;
+    }
+
+    /**
+     * Parses signature header in format "t=timestamp,v1=signature"
+     */
+    private static SignatureData parseSignatureHeader(String header) {
+        if (header == null || header.isEmpty()) {
+            return null;
+        }
+
+        SignatureData data = new SignatureData();
+        String[] pairs = header.split(",");
+
+        for (String pair : pairs) {
+            String[] parts = pair.split("=", 2);
+            if (parts.length != 2) {
+                continue;
+            }
+
+            String key = parts[0].trim();
+            String value = parts[1].trim();
+
+            if ("t".equals(key)) {
+                try {
+                    data.timestamp = Long.parseLong(value);
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            } else if ("v1".equals(key)) {
+                data.signature = value;
+            }
+        }
+
+        if (data.timestamp == 0 || data.signature == null) {
+            return null;
+        }
+
+        return data;
+    }
+
+    /**
+     * Verifies HMAC-SHA256 signature
+     * Computes: HMAC-SHA256(timestamp + "." + payload, secret)
+     */
+    private static boolean verifySignature(String payload, SignatureData sigData, String secret) {
         try {
+            // Compute expected signature: HMAC-SHA256(timestamp + "." + payload, secret)
             Mac mac = Mac.getInstance("HmacSHA256");
             SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(secretKeySpec);
 
-            byte[] hmacBytes = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            // Add timestamp
+            mac.update(String.valueOf(sigData.timestamp).getBytes(StandardCharsets.UTF_8));
+            // Add separator
+            mac.update(".".getBytes(StandardCharsets.UTF_8));
+            // Add payload
+            mac.update(payload.getBytes(StandardCharsets.UTF_8));
+
+            byte[] hmacBytes = mac.doFinal();
+
+            // Convert to hex string
             StringBuilder hexString = new StringBuilder();
             for (byte b : hmacBytes) {
                 String hex = Integer.toHexString(0xff & b);
@@ -159,7 +224,16 @@ public class WebhookExample {
             }
 
             String expectedSignature = hexString.toString();
-            return expectedSignature.equals(signature);
+
+            // Compare signatures
+            boolean isValid = expectedSignature.equals(sigData.signature);
+            if (!isValid) {
+                System.out.println("✗ Signature mismatch");
+                System.out.println("  Expected: " + expectedSignature);
+                System.out.println("  Received: " + sigData.signature);
+            }
+
+            return isValid;
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             System.out.println("✗ Error computing signature: " + e.getMessage());
             return false;

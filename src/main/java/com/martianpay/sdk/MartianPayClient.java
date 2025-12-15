@@ -2,6 +2,7 @@ package com.martianpay.sdk;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class MartianPayClient {
         private int code;
         private String error_code;
         private String msg;
-        private JsonObject data;
+        private JsonElement data;  // Changed from JsonObject to JsonElement to support both objects and arrays
 
         public int getCode() {
             return code;
@@ -74,7 +75,7 @@ public class MartianPayClient {
             return msg;
         }
 
-        public JsonObject getData() {
+        public JsonElement getData() {
             return data;
         }
     }
@@ -168,16 +169,197 @@ public class MartianPayClient {
     /**
      * Sends an HTTP GET request with query parameters
      *
+     * @param method       HTTP method (usually GET)
      * @param path         API endpoint path
-     * @param queryParams  Query parameters (can be null)
+     * @param params       Query parameters object (can be null)
      * @param responseType Response type class
      * @param <T>          Response type
      * @return Parsed response object
      * @throws IOException if request fails
      */
-    protected <T> T sendRequestWithQuery(String path, String queryParams, Class<T> responseType) throws IOException {
-        String fullPath = queryParams != null && !queryParams.isEmpty() ? path + "?" + queryParams : path;
-        return sendRequest("GET", fullPath, null, responseType);
+    protected <T> T sendRequestWithQuery(String method, String path, Object params, Class<T> responseType) throws IOException {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl + path).newBuilder();
+
+        // Build query parameters from object using reflection
+        if (params != null) {
+            addQueryParams(urlBuilder, params);
+        }
+
+        String url = urlBuilder.build().toString();
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+
+        // Add authorization header
+        String auth = apiKey + ":";
+        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+        requestBuilder.header("Authorization", "Basic " + encodedAuth);
+        requestBuilder.header("Content-Type", "application/json");
+
+        // Set HTTP method (usually GET for query params)
+        requestBuilder.get();
+
+        Request request = requestBuilder.build();
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            String responseBody = response.body() != null ? response.body().string() : "";
+
+            // Check HTTP status code
+            if (!response.isSuccessful()) {
+                String statusText = getHTTPStatusText(response.code());
+                if (!responseBody.isEmpty()) {
+                    throw new IOException(String.format("HTTP %d %s: %s", response.code(), statusText, responseBody));
+                }
+                throw new IOException(String.format("HTTP %d %s", response.code(), statusText));
+            }
+
+            // Parse common response
+            CommonResponse commonResponse = gson.fromJson(responseBody, CommonResponse.class);
+
+            // Check for business-level errors
+            if (commonResponse.getErrorCode() != null &&
+                    !commonResponse.getErrorCode().isEmpty() &&
+                    !"ok".equals(commonResponse.getErrorCode()) &&
+                    !"success".equals(commonResponse.getErrorCode())) {
+                throw new IOException(String.format("API error [%s]: %s",
+                        commonResponse.getErrorCode(), commonResponse.getMsg()));
+            }
+
+            // Legacy: check deprecated Code field
+            if (commonResponse.getCode() != 0) {
+                throw new IOException("API error: " + commonResponse.getMsg());
+            }
+
+            // Parse data field
+            if (responseType == Void.class || responseType == void.class) {
+                return null;
+            }
+
+            return gson.fromJson(commonResponse.getData(), responseType);
+        }
+    }
+
+    /**
+     * Sends an HTTP request and returns a list response using TypeToken for proper generic type handling
+     *
+     * @param method       HTTP method (GET, POST, DELETE, etc.)
+     * @param path         API endpoint path
+     * @param requestBody  Request body (can be null for GET requests)
+     * @param typeToken    TypeToken for the list type
+     * @param <T>          Response type
+     * @return Parsed list response
+     * @throws IOException if request fails
+     */
+    protected <T> T sendRequestWithTypeToken(String method, String path, Object requestBody,
+                                             com.google.gson.reflect.TypeToken<T> typeToken) throws IOException {
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(baseUrl + path);
+
+        // Add authorization header
+        String auth = apiKey + ":";
+        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+        requestBuilder.header("Authorization", "Basic " + encodedAuth);
+        requestBuilder.header("Content-Type", "application/json");
+
+        // Add request body if present
+        if (requestBody != null) {
+            String json = gson.toJson(requestBody);
+            requestBuilder.method(method, RequestBody.create(json, JSON));
+        } else {
+            if ("GET".equals(method) || "DELETE".equals(method)) {
+                requestBuilder.method(method, null);
+            } else {
+                requestBuilder.method(method, RequestBody.create("", JSON));
+            }
+        }
+
+        try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
+            String responseBody = response.body().string();
+
+            if (!response.isSuccessful()) {
+                String statusText = getHTTPStatusText(response.code());
+                if (!responseBody.isEmpty()) {
+                    throw new IOException(String.format("HTTP %d %s: %s", response.code(), statusText, responseBody));
+                }
+                throw new IOException(String.format("HTTP %d %s", response.code(), statusText));
+            }
+
+            // Parse common response
+            CommonResponse commonResponse = gson.fromJson(responseBody, CommonResponse.class);
+
+            // Check for business-level errors
+            if (commonResponse.getErrorCode() != null &&
+                    !commonResponse.getErrorCode().isEmpty() &&
+                    !"ok".equals(commonResponse.getErrorCode()) &&
+                    !"success".equals(commonResponse.getErrorCode())) {
+                throw new IOException(String.format("API error [%s]: %s",
+                        commonResponse.getErrorCode(), commonResponse.getMsg()));
+            }
+
+            // Legacy: check deprecated Code field
+            if (commonResponse.getCode() != 0) {
+                throw new IOException("API error: " + commonResponse.getMsg());
+            }
+
+            // Parse data field using TypeToken
+            return gson.fromJson(commonResponse.getData(), typeToken.getType());
+        }
+    }
+
+    /**
+     * Adds query parameters from an object using reflection
+     * Supports Map or fields tagged with @SerializedName or using field names directly
+     */
+    private void addQueryParams(HttpUrl.Builder urlBuilder, Object params) {
+        // Handle Map type directly
+        if (params instanceof java.util.Map) {
+            java.util.Map<?, ?> map = (java.util.Map<?, ?>) params;
+            for (java.util.Map.Entry<?, ?> entry : map.entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                Object value = entry.getValue();
+                if (value != null) {
+                    // Skip empty strings
+                    if (value instanceof String && ((String) value).isEmpty()) {
+                        continue;
+                    }
+                    urlBuilder.addQueryParameter(key, String.valueOf(value));
+                }
+            }
+            return;
+        }
+
+        // Handle regular objects using reflection
+        java.lang.reflect.Field[] fields = params.getClass().getDeclaredFields();
+
+        for (java.lang.reflect.Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(params);
+                if (value == null) {
+                    continue;
+                }
+
+                // Get field name from @SerializedName annotation or field name
+                String fieldName = field.getName();
+                com.google.gson.annotations.SerializedName annotation =
+                    field.getAnnotation(com.google.gson.annotations.SerializedName.class);
+                if (annotation != null) {
+                    fieldName = annotation.value();
+                }
+
+                // Skip empty strings
+                if (value instanceof String && ((String) value).isEmpty()) {
+                    continue;
+                }
+
+                // Add to query params
+                if (value instanceof Integer || value instanceof Long || value instanceof Boolean) {
+                    urlBuilder.addQueryParameter(fieldName, String.valueOf(value));
+                } else if (value instanceof String) {
+                    urlBuilder.addQueryParameter(fieldName, (String) value);
+                }
+            } catch (IllegalAccessException e) {
+                // Skip this field
+            }
+        }
     }
 
     /**
@@ -218,5 +400,66 @@ public class MartianPayClient {
 
     protected Gson getGson() {
         return gson;
+    }
+
+    // Service getters
+    public ApprovalService getApprovalService() {
+        return new ApprovalService(this.apiKey, this.baseUrl);
+    }
+
+    public AssetsService getAssetsService() {
+        return new AssetsService(this.apiKey, this.baseUrl);
+    }
+
+    public CustomerService getCustomerService() {
+        return new CustomerService(this.apiKey, this.baseUrl);
+    }
+
+    public InvoiceService getInvoiceService() {
+        return new InvoiceService(this.apiKey, this.baseUrl);
+    }
+
+    public MerchantAddressService getMerchantAddressService() {
+        return new MerchantAddressService(this.apiKey, this.baseUrl);
+    }
+
+    public OrderService getOrderService() {
+        return new OrderService(this.apiKey, this.baseUrl);
+    }
+
+    public PaymentIntentService getPaymentIntentService() {
+        return new PaymentIntentService(this.apiKey, this.baseUrl);
+    }
+
+    public PaymentLinkService getPaymentLinkService() {
+        return new PaymentLinkService(this.apiKey, this.baseUrl);
+    }
+
+    public PayoutService getPayoutService() {
+        return new PayoutService(this.apiKey, this.baseUrl);
+    }
+
+    public PayrollService getPayrollService() {
+        return new PayrollService(this.apiKey, this.baseUrl);
+    }
+
+    public ProductService getProductService() {
+        return new ProductService(this.apiKey, this.baseUrl);
+    }
+
+    public RefundService getRefundService() {
+        return new RefundService(this.apiKey, this.baseUrl);
+    }
+
+    public SellingPlanService getSellingPlanService() {
+        return new SellingPlanService(this.apiKey, this.baseUrl);
+    }
+
+    public StatsService getStatsService() {
+        return new StatsService(this.apiKey, this.baseUrl);
+    }
+
+    public SubscriptionService getSubscriptionService() {
+        return new SubscriptionService(this.apiKey, this.baseUrl);
     }
 }

@@ -109,7 +109,7 @@ cp -r ../examples/com .
 mkdir -p META-INF
 cat > META-INF/MANIFEST.MF << 'EOF'
 Manifest-Version: 1.0
-Main-Class: com.martianpay.examples.ExamplesMain
+Main-Class: com.martianpay.examples.Main
 EOF
 
 # 打包成JAR

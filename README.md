@@ -10,13 +10,18 @@ Official Java SDK for the MartianPay payment platform.
 - **Customers**: Create, update, retrieve, list, and delete customers
 - **Payment Methods**: List customer's saved payment methods (cards)
 - **Refunds**: Create, retrieve, and list refunds
-- **Payroll**: Create direct payroll, retrieve, and list payrolls and payroll items
+- **Payroll**: Create direct payroll (normal and Binance), retrieve, and list payrolls and payroll items
+- **Payout**: Preview, create, retrieve, list, approve, reject, and cancel payouts with approval workflow
 - **Merchant Addresses (Wallets)**: Add, verify, update, list, and delete blockchain addresses for withdrawals
-- **Assets**: List all available crypto and fiat assets with network details
-- **Balance**: Query merchant balance across different currencies and assets
+- **Assets**: List enabled and available crypto and fiat assets with network details and fees
+- **Balance**: Query merchant balance across different currencies and assets, with detailed breakdown
+- **Products**: Create, update, retrieve, list, and delete products with variants and selling plans
+- **Selling Plans**: Manage subscription and recurring payment plans with pricing strategies
+- **Payment Links**: Create, update, retrieve, list, and delete payment links for products
+- **Subscriptions**: Manage customer subscriptions, pause, resume, and cancel subscriptions
 - **Crypto Payments**: Support for crypto payment methods (USDT, USDC, ETH, etc.)
 - **Fiat/Card Payments**: Support for card payments via Stripe (new card and saved card)
-- **Webhook Events**: Receive and verify webhook events
+- **Webhook Events**: Receive and verify webhook events for real-time updates
 
 ## Installation
 
@@ -43,6 +48,26 @@ implementation 'com.martianpay:martianpay-java-sample:1.0.0'
 ## Integration Approaches
 
 MartianPay offers flexible integration options to suit different use cases. For detailed integration guides including frontend code examples, see the [examples directory](examples/README.md).
+
+## Interactive Examples
+
+The fastest way to learn the SDK! We provide an interactive menu-driven interface with examples covering all features:
+
+```bash
+cd examples
+./build_jar.sh   # Build executable JAR
+java -jar build/jars/martianpay-examples-1.0.0.jar
+```
+
+**Features:**
+- 📋 Two-level menu system organized by feature category
+- 🎲 Automatic randomization of emails and order IDs to avoid duplicates
+- 🎯 User-friendly prompts for interactive input
+- ✅ Comprehensive coverage of all SDK methods
+
+The examples demonstrate the **API-only integration approach** to show all SDK methods. For production, we recommend using the **MartianPay.js Widget** for simpler integration.
+
+📁 **See [examples/README.md](examples/README.md) for full details**
 
 ## Quick Start
 
@@ -103,22 +128,29 @@ public class Example {
 }
 ```
 
-## Running Unit Tests
+## Testing the SDK
 
-The SDK includes comprehensive unit tests for all features. See [src/test/README.md](src/test/README.md) for detailed testing instructions.
-
-To run tests:
+All SDK functionality can be tested through the interactive examples:
 
 ```bash
-# Run all tests
-mvn test
-
-# Run specific test class
-mvn test -Dtest=CustomerServiceTest
-
-# Run with coverage
-mvn clean test jacoco:report
+cd examples
+./build_jar.sh
+java -jar build/jars/martianpay-examples-1.0.0.jar
 ```
+
+Select from organized categories:
+1. **Payment Intent Examples** - Create, update, list, cancel payment intents with crypto and card payments
+2. **Customer Examples** - Manage customers and payment methods
+3. **Refund Examples** - Process and manage refunds
+4. **Payroll Examples** - Create and manage crypto payrolls (normal and Binance)
+5. **Merchant Address Examples** - Add and verify withdrawal addresses
+6. **Payout Examples** - Preview, create, approve, reject, and manage payouts
+7. **Assets Examples** - Query available crypto and fiat assets with network fees
+8. **Balance Examples** - View merchant balances across currencies and asset types
+9. **Product Examples** - Create and manage products with variants and selling plans
+10. **Payment Link Examples** - Create and manage payment links for products
+11. **Subscription Examples** - Manage customer subscriptions and recurring payments
+12. **Webhook Examples** - Test webhook event handling for real-time updates
 
 ## Keeping SDK Up to Date
 
@@ -138,18 +170,20 @@ mvn versions:use-latest-releases
 
 > **💡 Tip**: Check for updates periodically to get the latest features, improvements, and bug fixes.
 
-### What's New
+### Recent Improvements
 
-The SDK is regularly updated with:
+Latest updates include:
+- ✅ Two-level interactive menu for better navigation
+- ✅ Automatic randomization of emails and order IDs to prevent duplicates
+- ✅ User input prompts for flexible testing (addresses, amounts, networks)
 - ✅ Enhanced error handling with `error_code` field support
+- ✅ Product version field support for optimistic locking
+- ✅ Complete event type documentation with detailed comments
 - ✅ Comprehensive integration documentation and examples
-- ✅ Support for the latest MartianPay API features
-- ✅ Bug fixes and performance improvements
 
 ## Documentation & Resources
 
 - 📖 [Interactive Examples](examples/README.md) - Ready-to-run examples
-- 📖 [SDK Unit Tests](src/test/README.md) - Comprehensive SDK testing guide
 - 📖 [MartianPay.js Widget Guide](https://docs.martianpay.com/v1/docs/martianpay-js-usage) - Recommended integration method
 - 📖 [API Reference](https://docs.martianpay.com) - Full API documentation
 - 🏠 [MartianPay Dashboard](https://dashboard.martianpay.com) - Get your API key
@@ -165,7 +199,6 @@ The SDK uses the following dependencies:
 - **Gson** - JSON serialization/deserialization
 - **OkHttp** - HTTP client
 - **SLF4J & Logback** - Logging
-- **JUnit 5** - Testing framework
 
 ## Support
 

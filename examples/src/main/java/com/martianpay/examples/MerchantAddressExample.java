@@ -1,12 +1,7 @@
 package com.martianpay.examples;
 
-import com.martianpay.model.MerchantAddress;
+import com.martianpay.developer.*;
 import com.martianpay.sdk.MerchantAddressService;
-import com.martianpay.sdk.MerchantAddressService.MerchantAddressCreateRequest;
-import com.martianpay.sdk.MerchantAddressService.MerchantAddressListRequest;
-import com.martianpay.sdk.MerchantAddressService.MerchantAddressListResponse;
-import com.martianpay.sdk.MerchantAddressService.MerchantAddressUpdateRequest;
-import com.martianpay.sdk.MerchantAddressService.MerchantAddressVerifyRequest;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -22,7 +17,7 @@ public class MerchantAddressExample {
     private final Scanner scanner;
 
     public MerchantAddressExample() {
-        this.merchantAddressService = new MerchantAddressService(Common.API_KEY);
+        this.merchantAddressService = new MerchantAddressService(Common.currentAPIKey);
         this.scanner = new Scanner(System.in);
     }
 

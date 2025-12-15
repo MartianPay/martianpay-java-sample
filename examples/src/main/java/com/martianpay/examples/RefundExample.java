@@ -1,11 +1,7 @@
 package com.martianpay.examples;
 
-import com.martianpay.model.Refund;
+import com.martianpay.developer.*;
 import com.martianpay.sdk.RefundService;
-import com.martianpay.sdk.RefundService.RefundCreateRequest;
-import com.martianpay.sdk.RefundService.RefundCreateResponse;
-import com.martianpay.sdk.RefundService.RefundListRequest;
-import com.martianpay.sdk.RefundService.RefundListResponse;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -21,7 +17,7 @@ public class RefundExample {
     private final Scanner scanner;
 
     public RefundExample() {
-        this.refundService = new RefundService(Common.API_KEY);
+        this.refundService = new RefundService(Common.currentAPIKey);
         this.scanner = new Scanner(System.in);
     }
 
@@ -37,9 +33,16 @@ public class RefundExample {
             paymentIntentId = "pi_example_id";
         }
 
-        String reason = "requested_by_customer";
+        System.out.print("Enter refund amount (or press Enter for default 10.00): ");
+        String amountInput = scanner.nextLine().trim();
+        if (amountInput.isEmpty()) {
+            amountInput = "10.00";
+        }
+
+        String reason = "Customer requested refund";
         RefundCreateRequest request = new RefundCreateRequest();
         request.setPaymentIntent(paymentIntentId);
+        request.setAmount(amountInput);
         request.setReason(reason);
 
         try {

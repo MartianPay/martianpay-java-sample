@@ -1,0 +1,53 @@
+package com.martianpay.developer;
+
+import com.google.gson.annotations.SerializedName;
+import java.util.List;
+
+public class OrderListResponse {
+    @SerializedName("orders")
+    private List<OrderListItem> orders;
+
+    @SerializedName("total")
+    private Integer total;
+
+    @SerializedName("page")
+    private Integer page;
+
+    @SerializedName("page_size")
+    private Integer pageSize;
+
+    public OrderListResponse() {
+    }
+
+    public List<OrderListItem> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderListItem> orders) {
+        this.orders = orders;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+}

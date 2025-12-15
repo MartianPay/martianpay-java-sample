@@ -13,6 +13,11 @@ public class Common {
     public static final String API_KEY = "your_api_key_here";
 
     /**
+     * Current API key used at runtime (can be overridden by user input)
+     */
+    public static String currentAPIKey = API_KEY;
+
+    /**
      * Webhook secret for verifying webhook signatures.
      * Replace with your actual webhook secret from the MartianPay dashboard.
      */
