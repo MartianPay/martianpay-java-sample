@@ -3,12 +3,14 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * CustomerDeleteResponse represents response after deleting a customer
+ * Confirmation response after deleting a customer.
  */
 public class CustomerDeleteResponse {
+    /** Unique identifier of the deleted customer. */
     @SerializedName("id")
     private String id;
 
+    /** Deletion confirmation flag. */
     @SerializedName("deleted")
     private Boolean deleted;
 

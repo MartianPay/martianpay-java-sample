@@ -2,25 +2,49 @@ package com.martianpay.developer;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Request to list payroll batches with optional filtering.
+ */
 public class PayrollListRequest {
+    /**
+     * Page number for pagination (zero-indexed).
+     */
     @SerializedName("page")
     private Integer page;
 
+    /**
+     * Number of payroll batches to return per page.
+     */
     @SerializedName("page_size")
     private Integer pageSize;
 
+    /**
+     * Filter by start date (ISO 8601 format: YYYY-MM-DD).
+     */
     @SerializedName("start_date")
     private String startDate;
 
+    /**
+     * Filter by end date (ISO 8601 format: YYYY-MM-DD).
+     */
     @SerializedName("end_date")
     private String endDate;
 
+    /**
+     * Filter by external ID.
+     */
     @SerializedName("external_id")
     private String externalId;
 
+    /**
+     * Filter by payroll ID.
+     */
     @SerializedName("payroll_id")
     private String payrollId;
 
+    /**
+     * Filter by payroll processing status.
+     */
     @SerializedName("status")
     private String status;
 

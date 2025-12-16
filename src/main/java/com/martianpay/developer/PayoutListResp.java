@@ -10,6 +10,10 @@ public class PayoutListResp {
     @SerializedName("total")
     private Integer total;
 
+    /**
+     * Current page number, starting from 0 (zero-indexed).
+     * The first page is page 0, second page is page 1, etc.
+     */
     @SerializedName("page")
     private Integer page;
 

@@ -3,27 +3,49 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * CryptoAssetParams contains blockchain-specific parameters for cryptocurrency assets
+ * Blockchain-specific parameters for cryptocurrency assets.
+ * Includes network information, contract addresses, and blockchain explorer URLs.
  */
 public class CryptoAssetParams {
+    /**
+     * The blockchain network name (e.g., "ethereum", "polygon", "bitcoin").
+     */
     @SerializedName("network")
     public String network;
 
+    /**
+     * Whether this is mainnet (true) or testnet (false).
+     */
     @SerializedName("is_mainnet")
     public Boolean isMainnet;
 
+    /**
+     * Smart contract address for token-based assets (not needed for native coins).
+     */
     @SerializedName("contract_address")
     public String contractAddress;
 
+    /**
+     * URL template for blockchain explorer address links (uses {address} placeholder).
+     */
     @SerializedName("address_url_template")
     public String addressUrlTemplate;
 
+    /**
+     * URL template for blockchain explorer transaction links (uses {txHash} placeholder).
+     */
     @SerializedName("tx_url_template")
     public String txUrlTemplate;
 
+    /**
+     * Token symbol or cryptocurrency ticker (e.g., "BTC", "ETH", "USDT").
+     */
     @SerializedName("token")
     public String token;
 
+    /**
+     * Numeric chain ID for the blockchain network (for EVM-compatible chains).
+     */
     @SerializedName("chain_id")
     public Long chainId;
 

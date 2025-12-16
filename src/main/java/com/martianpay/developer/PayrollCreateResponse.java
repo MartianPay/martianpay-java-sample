@@ -3,16 +3,23 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
+/**
+ * Response after creating a payroll batch with individual payout items.
+ */
 public class PayrollCreateResponse {
+    /** The newly created payroll batch. */
     @SerializedName("payroll")
     private Payroll payroll;
 
+    /** List of individual payout items for each recipient. */
     @SerializedName("items")
     private List<PayrollItems> items;
 
+    /** List of currency swap operations (if applicable). */
     @SerializedName("swap_items")
     private List<PayrollSwapItems> swapItems;
 
+    /** List of Binance-specific items (if applicable). */
     @SerializedName("binance_from_items")
     private List<BinanceFromItems> binanceFromItems;
 

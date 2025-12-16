@@ -1,6 +1,12 @@
 package com.martianpay.developer;
 
+/**
+ * Request to resume a merchant-paused subscription.
+ */
 public class ResumeMerchantSubscriptionRequest {
+    /**
+     * Unique identifier of the paused subscription to resume.
+     */
     private String subscriptionId;
 
     public ResumeMerchantSubscriptionRequest() {

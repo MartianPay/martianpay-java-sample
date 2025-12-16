@@ -3,21 +3,36 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * SubscriptionListRequest lists subscriptions for merchant with filters
+ * Request to list subscriptions with optional filtering.
  */
 public class SubscriptionListRequest {
+    /**
+     * Filter by customer ID.
+     */
     @SerializedName("customer_id")
     private String customerID;
 
+    /**
+     * Filter by subscription status.
+     */
     @SerializedName("status")
     private String status;
 
+    /**
+     * Filter by external ID.
+     */
     @SerializedName("external_id")
     private String externalID;
 
+    /**
+     * Number of records to skip (offset for pagination).
+     */
     @SerializedName("offset")
     private Integer offset;
 
+    /**
+     * Maximum number of subscriptions to return.
+     */
     @SerializedName("limit")
     private Integer limit;
 

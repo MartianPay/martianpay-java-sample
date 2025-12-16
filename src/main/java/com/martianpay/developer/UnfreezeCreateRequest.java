@@ -3,35 +3,35 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * UnfreezeCreateRequest creates an unfreeze request
+ * Request to create an unfreeze request for frozen funds.
  */
 public class UnfreezeCreateRequest {
     /**
-     * PaymentIntentID is the ID of the payment intent with frozen funds
+     * ID of the payment intent with frozen funds.
      */
     @SerializedName("payment_intent_id")
     private String paymentIntentId;
 
     /**
-     * Type is the unfreeze type (unfreeze_reverse or unfreeze_release)
+     * Unfreeze type (unfreeze_reverse or unfreeze_release).
      */
     @SerializedName("type")
     private String type;
 
     /**
-     * Address is the destination address for reversed funds (required when Type is unfreeze_reverse)
+     * Destination address for reversed funds.
      */
     @SerializedName("address")
     private String address;
 
     /**
-     * ExternalID is an optional external identifier for idempotency
+     * External identifier for idempotency.
      */
     @SerializedName("external_id")
     private String externalId;
 
     /**
-     * Description is an optional description of the unfreeze reason
+     * Description of the unfreeze reason.
      */
     @SerializedName("description")
     private String description;

@@ -3,98 +3,72 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Asset represents a cryptocurrency or fiat asset supported by the platform
+ * Represents a cryptocurrency or fiat currency asset.
+ * Fiat assets use ISO currency code (e.g., "USD"). Currently only USD is supported.
+ * Crypto assets use format {TOKEN}_{NETWORK} (e.g., "USDC_ETH", "BTC_BTC").
  */
 public class Asset {
-    /**
-     * Id is the unique identifier of the asset (e.g., "USDC_ETH", "USD")
-     */
+    /** Unique identifier (e.g., "USD" for fiat, "USDC_ETH" for crypto). */
     @SerializedName("id")
     private String id;
 
-    /**
-     * DisplayName is the human-readable name of the asset (e.g., "USD Coin on Ethereum")
-     */
+    /** Human-readable display name (e.g., "United States Dollar", "Bitcoin"). */
     @SerializedName("display_name")
     private String displayName;
 
-    /**
-     * Coin is the base currency code (e.g., "USDC", "BTC", "USD")
-     */
+    /** Base currency or token code (e.g., "USD", "USDC", "BTC"). */
     @SerializedName("coin")
     private String coin;
 
-    /**
-     * IsFiat indicates whether this is a fiat currency (true) or cryptocurrency (false)
-     */
+    /** True if fiat currency, false if cryptocurrency. */
     @SerializedName("is_fiat")
     private Boolean isFiat;
 
-    /**
-     * Decimals is the number of decimal places for this asset
-     */
+    /** Number of decimal places (e.g., 2 for USD, 6 for USDC, 8 for BTC). */
     @SerializedName("decimals")
     private Integer decimals;
 
-    /**
-     * Payable indicates whether this asset can be used for payments
-     */
+    /** True if this asset can be used for payments. */
     @SerializedName("payable")
     private Boolean payable;
 
-    // Crypto asset params (embedded fields from Go)
-    /**
-     * Network is the blockchain network name (e.g., "Ethereum", "Polygon", "Solana")
-     */
+    // Cryptocurrency-specific fields (null for fiat)
+
+    /** Blockchain network name (e.g., "Ethereum", "Polygon", "Bitcoin"). */
     @SerializedName("network")
     private String network;
 
-    /**
-     * IsMainnet indicates if this is a mainnet (true) or testnet (false) asset
-     */
+    /** True if mainnet, false if testnet. */
     @SerializedName("is_mainnet")
     private Boolean isMainnet;
 
-    /**
-     * ContractAddress is the smart contract address for token assets (empty for native coins)
-     */
+    /** Smart contract address (empty for native coins like BTC, ETH). */
     @SerializedName("contract_address")
     private String contractAddress;
 
-    /**
-     * AddressUrlTemplate is the URL template for viewing an address on a block explorer
-     */
+    /** URL template for viewing addresses in block explorer. */
     @SerializedName("address_url_template")
     private String addressUrlTemplate;
 
-    /**
-     * TxUrlTemplate is the URL template for viewing a transaction on a block explorer
-     */
+    /** URL template for viewing transactions in block explorer. */
     @SerializedName("tx_url_template")
     private String txUrlTemplate;
 
-    /**
-     * Token is the token symbol (e.g., "USDC", "USDT")
-     */
+    /** Token symbol (e.g., "USDC", "BTC", "ETH"). */
     @SerializedName("token")
     private String token;
 
-    /**
-     * ChainId is the blockchain chain ID for EVM-compatible networks
-     */
+    /** Chain ID for EVM-compatible networks (e.g., 1 for Ethereum, 137 for Polygon). */
     @SerializedName("chain_id")
     private Long chainId;
 
-    // Fiat asset params (embedded fields from Go)
-    /**
-     * Symbol is the currency symbol (e.g., "$", "€", "£")
-     */
+    // Fiat-specific fields (null for crypto)
+
+    /** Currency symbol (e.g., "$", "€", "£"). */
     @SerializedName("symbol")
     private String symbol;
 
-    /**
-     * Provider is the payment provider for this fiat currency (e.g., "Stripe", "PayPal")
-     */
+    /** Payment provider (e.g., "Stripe", "PayPal"). */
     @SerializedName("provider")
     private String provider;
 

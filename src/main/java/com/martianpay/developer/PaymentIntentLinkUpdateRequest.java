@@ -2,22 +2,43 @@ package com.martianpay.developer;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Request to update and confirm a payment intent from a payment link.
+ */
 public class PaymentIntentLinkUpdateRequest {
+    /**
+     * Unique key identifier of the payment intent to update.
+     */
     @SerializedName("key")
     private String key;
 
+    /**
+     * Payment link ID associated with this payment intent.
+     */
     @SerializedName("payment_link_id")
     private String paymentLinkId;
 
+    /**
+     * Client secret for secure payment intent access.
+     */
     @SerializedName("client_secret")
     private String clientSecret;
 
+    /**
+     * Type of payment method being used.
+     */
     @SerializedName("payment_method_type")
     private String paymentMethodType;
 
+    /**
+     * Payment method configuration and options.
+     */
     @SerializedName("payment_method_options")
     private PaymentMethodConfirmOptions paymentMethodData;
 
+    /**
+     * Whether to save customer's payment information for future use.
+     */
     @SerializedName("save_customer")
     private Boolean saveCustomer;
 

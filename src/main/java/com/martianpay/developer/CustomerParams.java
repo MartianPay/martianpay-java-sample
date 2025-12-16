@@ -4,35 +4,35 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 /**
- * CustomerParams contains parameters for creating or updating a customer
+ * Parameters for creating or updating a customer record.
  */
 public class CustomerParams {
     /**
-     * Name is the customer's full name
+     * Customer's full name.
      */
     @SerializedName("name")
     private String name;
 
     /**
-     * Email is the customer's email address (must be unique per merchant)
+     * Customer's email address (must be unique per merchant).
      */
     @SerializedName("email")
     private String email;
 
     /**
-     * Description is an optional text description for internal reference
+     * Optional description for internal reference (not visible to customer).
      */
     @SerializedName("description")
     private String description;
 
     /**
-     * Metadata is a set of key-value pairs for storing additional information
+     * Key-value pairs for storing additional information.
      */
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
     /**
-     * Phone is the customer's phone number in E.164 format (e.g., +1234567890)
+     * Customer's phone number in E.164 format (e.g., "+12025551234").
      */
     @SerializedName("phone")
     private String phone;

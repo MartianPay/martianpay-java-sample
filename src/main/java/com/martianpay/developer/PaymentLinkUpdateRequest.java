@@ -3,9 +3,12 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * PaymentLinkUpdateRequest updates a payment link
+ * Request to update an existing payment link.
  */
 public class PaymentLinkUpdateRequest {
+    /**
+     * Whether the payment link is active and accessible.
+     */
     @SerializedName("active")
     private Boolean active;
 

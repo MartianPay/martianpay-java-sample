@@ -5,83 +5,83 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * PayoutParams contains parameters for creating a payout
+ * Parameters for creating a payout.
  */
 public class PayoutParams {
     /**
-     * SourceCoin is the source coin for the swap
+     * Source cryptocurrency or currency code (e.g., "USDT", "BTC", "USD"). Currently only USD is supported for fiat.
      */
     @SerializedName("source_coin")
     private String sourceCoin;
 
     /**
-     * SourceAmount is the source amount for the swap
+     * Amount to pay out in smallest unit of source currency.
      */
     @SerializedName("source_amount")
     private String sourceAmount;
 
     /**
-     * QuoteIds is the list of quote IDs for the swap
+     * List of quote IDs for currency conversion swaps.
      */
     @SerializedName("quote_ids")
     private List<String> quoteIds;
 
     /**
-     * DestinationAssetId is the asset ID of the destination currency
+     * Destination currency asset ID (e.g., "usd", "usdt", "btc"). Currently only USD is supported for fiat.
      */
     @SerializedName("receive_asset_id")
     private String destinationAssetId;
 
     /**
-     * DestinationAmount is the amount to be received
+     * Amount to be received in destination currency.
      */
     @SerializedName("receive_amount")
     private String destinationAmount;
 
     /**
-     * DestinationAccountType is the type of the destination account (bank or wallet)
+     * Destination account type ("bank", "wallet", or "merchant").
      */
     @SerializedName("receive_account_type")
     private String destinationAccountType;
 
     /**
-     * DestinationAccountId is the ID of the destination account
+     * ID of saved destination account.
      */
     @SerializedName("receive_account_id")
     private String destinationAccountId;
 
     /**
-     * DestinationAddress is the optional address for receiving funds
+     * Direct address for receiving funds (alternative to account ID).
      */
     @SerializedName("receive_address")
     private String destinationAddress;
 
     /**
-     * ToMerchantId is the destination merchant ID for internal transfers
+     * Destination merchant ID for internal platform transfers.
      */
     @SerializedName("to_merchant_id")
     private String toMerchantId;
 
     /**
-     * InternalNote contains internal notes for record keeping
+     * Internal notes for record keeping (not visible to recipient).
      */
     @SerializedName("internal_note")
     private String internalNote;
 
     /**
-     * StatementDescriptor is the description that appears on the statement
+     * Description appearing on recipient's statement.
      */
     @SerializedName("statement_descriptor")
     private String statementDescriptor;
 
     /**
-     * ExternalId is the external reference ID
+     * External reference ID from your system.
      */
     @SerializedName("external_id")
     private String externalId;
 
     /**
-     * Metadata contains additional metadata as key-value pairs
+     * Key-value pairs for custom tracking.
      */
     @SerializedName("metadata")
     private Map<String, String> metadata;

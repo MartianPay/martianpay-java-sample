@@ -45,9 +45,7 @@ public class Customer {
     @SerializedName("total_refund")
     private Long totalRefund;
 
-    /**
-     * Currency is the three-letter ISO currency code
-     */
+    /** Currency is the three-letter ISO currency code. Currently only USD is supported. */
     @SerializedName("currency")
     private String currency;
 

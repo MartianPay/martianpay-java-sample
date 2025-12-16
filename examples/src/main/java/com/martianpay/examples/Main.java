@@ -12,8 +12,19 @@ import java.util.Scanner;
  */
 public class Main {
 
+    /**
+     * Scanner for reading user input from console
+     */
     private static final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Main entry point for the MartianPay SDK examples application.
+     *
+     * This method initializes the application, prompts for API key configuration,
+     * and displays an interactive menu system for testing various SDK features.
+     *
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         System.out.println("===========================================");
         System.out.println("  MartianPay Go SDK Examples");
@@ -60,9 +71,22 @@ public class Main {
             }
         }
 
+        // Clean up resources before exit
         scanner.close();
     }
 
+    /**
+     * Displays the main menu with all available example categories.
+     *
+     * Shows a list of 12 different SDK feature categories including:
+     * - Payment processing (intents, links)
+     * - Customer management
+     * - Refunds and payouts
+     * - Merchant addresses
+     * - Assets and balances
+     * - Products and subscriptions
+     * - Webhooks
+     */
     private static void showMainMenu() {
         System.out.println("\n" + "=".repeat(80));
         System.out.println("MartianPay SDK Examples - Main Menu");
@@ -84,6 +108,16 @@ public class Main {
         System.out.println("\n0. Exit");
     }
 
+    /**
+     * Handles user selection of a specific category and displays its submenu.
+     *
+     * This method shows all available examples within the selected category
+     * and allows the user to execute specific examples or return to main menu.
+     * Each category has its own set of examples demonstrating different
+     * SDK features and use cases.
+     *
+     * @param category The category number (1-12) selected by the user
+     */
     private static void handleCategory(int category) {
         while (true) {
             System.out.println("\n" + "=".repeat(80));
@@ -276,6 +310,23 @@ public class Main {
         }
     }
 
+    /**
+     * Maps a category and choice to the global example number.
+     *
+     * Since examples are numbered sequentially across all categories,
+     * this method calculates the correct example number by adding
+     * the category offset to the user's choice within that category.
+     *
+     * Example mappings:
+     * - Category 1 (Payment Intent): Examples 1-8
+     * - Category 2 (Customer): Examples 9-13
+     * - Category 3 (Refund): Examples 14-16
+     * - And so on...
+     *
+     * @param category The category number (1-12)
+     * @param choice The choice number within the category (1-N)
+     * @return The global example number to execute
+     */
     private static int getExampleNumber(int category, int choice) {
         int[] categoryOffsets = {
                 0,  // Payment Intent: 1-8
@@ -295,6 +346,24 @@ public class Main {
         return categoryOffsets[category - 1] + choice;
     }
 
+    /**
+     * Executes the selected example by its global number.
+     *
+     * This method:
+     * 1. Creates a MartianPayClient with the current API key
+     * 2. Instantiates all example classes
+     * 3. Executes the specific example based on the choice number
+     * 4. Handles and displays any errors that occur
+     *
+     * Each example demonstrates a specific SDK feature such as:
+     * - Creating/updating/retrieving resources
+     * - Listing resources with pagination
+     * - Handling different payment methods
+     * - Managing subscriptions and invoices
+     * - Processing payouts and refunds
+     *
+     * @param choice The global example number (1-83) to execute
+     */
     private static void runExample(int choice) {
         System.out.printf("Using API Key: %s\n", Common.currentAPIKey);
         MartianPayClient client = new MartianPayClient(Common.currentAPIKey);

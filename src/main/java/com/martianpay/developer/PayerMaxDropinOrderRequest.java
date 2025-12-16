@@ -2,22 +2,43 @@ package com.martianpay.developer;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Request to create a PayerMax drop-in order.
+ */
 public class PayerMaxDropinOrderRequest {
+    /**
+     * Payment link ID if this order is from a payment link.
+     */
     @SerializedName("payment_link_id")
     private String paymentLinkId;
 
+    /**
+     * Payment intent key identifier.
+     */
     @SerializedName("key")
     private String key;
 
+    /**
+     * Payment intent ID.
+     */
     @SerializedName("payment_intent_id")
     private String paymentIntentId;
 
+    /**
+     * Charge ID if this order is for a specific charge.
+     */
     @SerializedName("charge_id")
     private String chargeId;
 
+    /**
+     * Client secret for secure payment intent access.
+     */
     @SerializedName("client_secret")
     private String clientSecret;
 
+    /**
+     * Payment token from PayerMax for tokenized payment methods.
+     */
     @SerializedName("payment_token")
     private String paymentToken;
 

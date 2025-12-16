@@ -3,22 +3,30 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
+/**
+ * Paginated list of subscriptions with offset-based pagination.
+ */
 public class ListSubscriptionsResponse {
+    /** List of subscriptions in the current page. */
     @SerializedName("data")
     private List<SubscriptionDetails> data;
 
+    /** Total number of subscriptions matching the query. */
     @SerializedName("total")
     private Long total;
 
+    /** Pagination offset. */
     @SerializedName("offset")
     private Integer offset;
 
+    /** Maximum records per page. */
     @SerializedName("limit")
     private Integer limit;
 
     public ListSubscriptionsResponse() {
     }
 
+    // Getters and Setters
     public List<SubscriptionDetails> getData() {
         return data;
     }

@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * AssetsListResponse contains the list of assets enabled for the merchant
+ * List of assets enabled for the merchant.
  */
 public class AssetsListResponse {
+    /** List of cryptocurrency and fiat assets. Currently only USD is supported. */
     @SerializedName("assets")
     private List<Asset> assets;
 

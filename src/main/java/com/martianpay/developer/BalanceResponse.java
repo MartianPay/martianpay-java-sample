@@ -4,27 +4,34 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * BalanceResponse represents the merchant's balance information
+ * Merchant balance information across different states (available, pending, locked, frozen).
  */
 public class BalanceResponse {
+    /** Currency or asset symbol (e.g., "USD", "BTC", "ETH"). Currently only USD is supported. */
     @SerializedName("currency")
     private String currency;
 
+    /** Available balance ready for immediate use. */
     @SerializedName("available_balance")
     private String availableBalance;
 
+    /** Pending balance currently being processed. */
     @SerializedName("pending_balance")
     private String pendingBalance;
 
+    /** Locked balance reserved for refunds or disputes. */
     @SerializedName("locked_balance")
     private String lockedBalance;
 
+    /** Frozen balance temporarily restricted. */
     @SerializedName("frozen_balance")
     private String frozenBalance;
 
+    /** Total balance across all states. */
     @SerializedName("total_balance")
     private String totalBalance;
 
+    /** Detailed balance breakdown by asset and network. */
     @SerializedName("balance_details")
     private List<BalanceDetail> balanceDetails;
 

@@ -3,90 +3,205 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Transaction represents a blockchain transaction
+ * Transaction represents a blockchain transaction on the MartianPay platform.
+ *
+ * A transaction records the transfer of cryptocurrency funds on a blockchain network.
+ * It includes comprehensive information about the transfer, including addresses, amounts,
+ * fees, and compliance screening results.
+ *
+ * Transaction types:
+ * - Type 0 (Deposit): Incoming cryptocurrency payment to a merchant address
+ * - Type 1 (Refund): Outgoing cryptocurrency payment back to a customer
+ *
+ * Transaction lifecycle:
+ * 1. Submitted - Transaction broadcast to blockchain network
+ * 2. Pending - Waiting for blockchain confirmations
+ * 3. Completed - Required confirmations received
+ * 4. Confirmed - Final state after maximum confirmations
+ * 5. Failed - Transaction failed on blockchain or was rejected
+ *
+ * AML screening:
+ * All transactions undergo Anti-Money Laundering (AML) screening.
+ * A transaction is considered successful only when:
+ * - status is "confirmed"
+ * - amlStatus is "approved"
+ *
+ * Key features:
+ * - Blockchain transaction hash for verification
+ * - Source and destination address tracking
+ * - Amount and asset identification
+ * - Fee breakdown (network fees and service fees)
+ * - AML compliance screening
+ * - Association with charges or refunds
+ * - Real-time status updates
+ *
+ * Use cases:
+ * - Track customer deposits to payment addresses
+ * - Monitor refund transactions to customer addresses
+ * - Verify blockchain confirmations
+ * - Generate transaction history reports
+ * - Audit trails for compliance
+ * - Fee reconciliation
+ * - Fraud detection and prevention
+ *
+ * Security considerations:
+ * - All transactions are screened for AML compliance
+ * - High-risk transactions may be flagged or rejected
+ * - Transaction hashes can be verified on public blockchains
+ * - Double-spend detection through blockchain monitoring
  */
 public class Transaction {
     /**
-     * SourceAddress is the address sending the funds
+     * The blockchain address sending the funds.
+     * This is the wallet address initiating the transaction.
+     * For deposits: Customer's cryptocurrency wallet address
+     * For refunds: Merchant's refund address
+     * Format varies by blockchain (e.g., 0x... for Ethereum, bc1... for Bitcoin)
      */
     @SerializedName("source_address")
     private String sourceAddress;
 
     /**
-     * DestinationAddress is the address receiving the funds
+     * The blockchain address receiving the funds.
+     * This is the wallet address where funds are being sent.
+     * For deposits: Merchant's deposit address
+     * For refunds: Customer's refund address
+     * Format varies by blockchain (e.g., 0x... for Ethereum, bc1... for Bitcoin)
      */
     @SerializedName("destination_address")
     private String destinationAddress;
 
     /**
-     * TxHash is the transaction hash on the blockchain
+     * The unique transaction hash on the blockchain.
+     * This hash uniquely identifies the transaction on the blockchain network
+     * and can be used to verify the transaction on blockchain explorers.
+     * Format: Hexadecimal string (e.g., 0x... for Ethereum, 64-char hex for Bitcoin)
+     * Immutable once set - serves as the transaction's permanent identifier.
      */
     @SerializedName("tx_hash")
     private String txHash;
 
     /**
-     * Amount is the transaction amount
+     * The transaction amount in the smallest unit of the cryptocurrency.
+     * Represented as a string to maintain precision for large numbers and many decimals.
+     * Examples:
+     * - For Bitcoin: amount in satoshis (1 BTC = 100,000,000 satoshis)
+     * - For Ethereum: amount in wei (1 ETH = 10^18 wei)
+     * - For USDT: amount in smallest unit based on token decimals
+     * This is the gross amount before any fees are deducted.
      */
     @SerializedName("amount")
     private String amount;
 
     /**
-     * AssetId is the unique identifier of the asset (maps to token symbol and network)
+     * Unique identifier of the cryptocurrency asset.
+     * Maps to a specific token symbol and blockchain network combination.
+     * Format: asset_[random_id] or token symbol
+     * Examples: "asset_btc_mainnet", "asset_eth_erc20", "BTC", "ETH", "USDT"
+     * Used to identify which cryptocurrency and on which network this transaction occurs.
      */
     @SerializedName("asset_id")
     private String assetId;
 
     /**
-     * Type indicates the transaction type (0: deposit, 1: refund)
+     * Transaction type identifier.
+     * Values:
+     * - 0: Deposit transaction (incoming payment to merchant)
+     * - 1: Refund transaction (outgoing refund to customer)
+     * This field determines the direction and purpose of the transaction.
      */
     @SerializedName("type")
     private Integer type;
 
     /**
-     * CreatedAt is the Unix timestamp when the transaction was created
+     * Unix timestamp (in seconds) when the transaction was created in the system.
+     * This is when MartianPay first detected or initiated the transaction,
+     * not necessarily when it was confirmed on the blockchain.
+     * Used for chronological ordering and age calculations.
      */
     @SerializedName("created_at")
     private Long createdAt;
 
     /**
-     * Status is the transaction status ("submitted", "failed", "completed", "confirmed")
-     * Transaction is successful when status is "confirmed" and AmlStatus is "approved"
+     * Current status of the transaction in its lifecycle.
+     * Possible values:
+     * - "submitted": Transaction broadcast to blockchain, awaiting confirmations
+     * - "completed": Transaction has reached required confirmations for business logic
+     * - "confirmed": Transaction has maximum confirmations and is finalized
+     * - "failed": Transaction failed on blockchain or was rejected by the network
+     *
+     * A transaction is considered fully successful when:
+     * - status is "confirmed" AND
+     * - amlStatus is "approved"
+     *
+     * Status progression: submitted → completed → confirmed (or failed at any stage)
      */
     @SerializedName("status")
     private String status;
 
     /**
-     * AmlStatus is the AML screening status ('', 'approved', 'rejected')
+     * Anti-Money Laundering (AML) screening status for this transaction.
+     * Possible values:
+     * - "" (empty string): AML screening not yet performed or not required
+     * - "approved": Transaction passed AML compliance checks and can proceed
+     * - "rejected": Transaction failed AML checks and is flagged for review
+     *
+     * All transactions undergo AML screening for regulatory compliance.
+     * High-risk transactions (based on AmlInfo score and rules) may be rejected.
+     * A transaction is only considered successful when amlStatus is "approved".
      */
     @SerializedName("aml_status")
     private String amlStatus;
 
     /**
-     * AmlInfo contains detailed AML screening information
+     * Detailed Anti-Money Laundering screening information.
+     * Contains the risk score (0-10) and list of triggered compliance rules.
+     * Provides transparency into why a transaction may have been flagged.
+     * Null if AML screening has not been performed yet.
+     * See AmlInfo class for detailed field descriptions.
      */
     @SerializedName("aml_info")
     private AmlInfo amlInfo;
 
     /**
-     * ChargeId is the unique identifier of the associated charge
+     * Unique identifier of the charge or payment intent this transaction is associated with.
+     * Format: ch_[random_id] or pi_[random_id]
+     * Links this blockchain transaction to the payment charge it fulfills.
+     * Used to track which payment this transaction is paying for.
+     * Always populated for deposit transactions (type=0).
      */
     @SerializedName("charge_id")
     private String chargeId;
 
     /**
-     * RefundId is the unique identifier of the associated refund (only valid when Type==1)
+     * Unique identifier of the refund this transaction is associated with.
+     * Format: re_[random_id]
+     * Only populated when type=1 (refund transaction).
+     * Links this blockchain transaction to the refund it executes.
+     * Null for deposit transactions (type=0).
      */
     @SerializedName("refund_id")
     private String refundId;
 
     /**
-     * FeeInfo contains detailed fee information for the transaction
+     * Detailed fee breakdown for this transaction.
+     * Contains both network fees (paid to blockchain) and service fees (paid to platform).
+     * Provides transparency in fee structure and total cost breakdown.
+     * Null if fee information is not yet available or not applicable.
+     * See FeeInfo class for detailed field descriptions.
      */
     @SerializedName("fee_info")
     private FeeInfo feeInfo;
 
     /**
-     * FeeCurrency is the asset used to pay the transaction fee (e.g., ETH for ERC-20 tokens)
+     * The cryptocurrency asset used to pay the blockchain transaction fee.
+     * Often different from the asset being transferred in the transaction.
+     * Examples:
+     * - "ETH" when sending ERC-20 tokens (gas fees paid in ETH)
+     * - "BNB" when sending BEP-20 tokens (gas fees paid in BNB)
+     * - "BTC" when sending Bitcoin (fees paid in BTC)
+     * Format: Token symbol or asset identifier
+     * Used to correctly account for transaction costs in different currencies.
      */
     @SerializedName("fee_currency")
     private String feeCurrency;

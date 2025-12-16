@@ -99,9 +99,7 @@ public class PaymentIntent {
     @SerializedName("updated")
     private Long updated;
 
-    /**
-     * Currency is the currency of the payment intent
-     */
+    /** Currency of the payment intent. Currently only USD is supported. */
     @SerializedName("currency")
     private String currency;
 

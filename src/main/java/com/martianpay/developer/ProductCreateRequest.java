@@ -5,54 +5,102 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ProductCreateRequest creates a new product
+ * Request to create a new product.
  */
 public class ProductCreateRequest {
+    /**
+     * Custom ID for the product.
+     */
     @SerializedName("id")
     private String id;
 
+    /**
+     * Name of the product displayed to customers.
+     */
     @SerializedName("name")
     private String name;
 
+    /**
+     * Base price of the product.
+     */
     @SerializedName("price")
     private AssetAmount price;
 
+    /**
+     * Fixed price of the product.
+     */
     @SerializedName("fixed_price")
     private AssetAmount fixedPrice;
 
+    /**
+     * Description of the product.
+     */
     @SerializedName("description")
     private String description;
 
+    /**
+     * Tax code for automated tax calculation.
+     */
     @SerializedName("tax_code")
     private String taxCode;
 
+    /**
+     * Custom key-value pairs for additional data.
+     */
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
+    /**
+     * Default currency code for displaying prices. Currently only USD is supported.
+     */
     @SerializedName("default_currency")
     private String defaultCurrency;
 
+    /**
+     * Ordered list of media IDs for product display.
+     */
     @SerializedName("media_order")
     private List<String> mediaOrder;
 
+    /**
+     * Whether to collect shipping address during checkout.
+     */
     @SerializedName("collect_shipping_address")
     private Boolean collectShippingAddress;
 
+    /**
+     * Whether to collect tax address for tax calculation.
+     */
     @SerializedName("collect_tax_address")
     private Boolean collectTaxAddress;
 
+    /**
+     * Whether this product requires a selling plan to be selected.
+     */
     @SerializedName("requires_selling_plan")
     private Boolean requiresSellingPlan;
 
+    /**
+     * List of product options.
+     */
     @SerializedName("options")
     private List<ProductOption> options;
 
+    /**
+     * List of product variants.
+     */
     @SerializedName("variants")
     private List<ProductVariant> variants;
 
+    /**
+     * Whether the product is active and available for purchase.
+     */
     @SerializedName("active")
     private Boolean active;
 
+    /**
+     * List of selling plan group IDs associated with this product.
+     */
     @SerializedName("selling_plan_group_ids")
     private List<String> sellingPlanGroupIDs;
 

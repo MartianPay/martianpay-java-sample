@@ -4,65 +4,65 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * UpdateSellingPlanRequest represents a request to update an existing selling plan
+ * Request to update an existing selling plan.
  */
 public class UpdateSellingPlanRequest {
     /**
-     * Name is the name of the selling plan
+     * Name of the selling plan.
      */
     @SerializedName("name")
     private String name;
 
     /**
-     * Description is the description of the selling plan
+     * Description of the selling plan.
      */
     @SerializedName("description")
     private String description;
 
     /**
-     * BillingPolicyType is the billing policy type ("RECURRING" | "PREPAID")
+     * Billing policy type ("RECURRING" or "PREPAID").
      */
     @SerializedName("billing_policy_type")
     private String billingPolicyType;
 
     /**
-     * BillingPolicy contains the billing policy configuration
+     * Billing policy configuration.
      */
     @SerializedName("billing_policy")
     private BillingPolicyRequest billingPolicy;
 
     /**
-     * PricingPolicy is the pricing policy configuration
+     * Pricing policy configuration.
      */
     @SerializedName("pricing_policy")
     private List<PricingPolicyItemRequest> pricingPolicy;
 
     /**
-     * TrialPeriodDays is the trial period in days (string format)
+     * Trial period in days.
      */
     @SerializedName("trial_period_days")
     private String trialPeriodDays;
 
     /**
-     * ValidFrom is the Unix timestamp when the plan becomes valid (seconds)
+     * Unix timestamp when the plan becomes valid (seconds).
      */
     @SerializedName("valid_from")
     private Long validFrom;
 
     /**
-     * ValidUntil is the Unix timestamp when the plan expires (seconds)
+     * Unix timestamp when the plan expires (seconds).
      */
     @SerializedName("valid_until")
     private Long validUntil;
 
     /**
-     * Priority is the priority of this plan (string format)
+     * Priority of this plan.
      */
     @SerializedName("priority")
     private String priority;
 
     /**
-     * Status is the current status ("active" | "disabled")
+     * Current status ("active" or "disabled").
      */
     @SerializedName("status")
     private String status;

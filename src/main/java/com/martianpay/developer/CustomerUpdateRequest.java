@@ -4,24 +4,42 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 /**
- * CustomerUpdateRequest contains parameters for updating an existing customer
+ * Request to update an existing customer's information.
  */
 public class CustomerUpdateRequest {
+    /**
+     * Customer ID to update.
+     */
     @SerializedName("id")
     private String id;
 
+    /**
+     * Customer's full name.
+     */
     @SerializedName("name")
     private String name;
 
+    /**
+     * Customer's email address.
+     */
     @SerializedName("email")
     private String email;
 
+    /**
+     * Optional description or notes about the customer.
+     */
     @SerializedName("description")
     private String description;
 
+    /**
+     * Custom metadata as key-value pairs.
+     */
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
+    /**
+     * Customer's phone number.
+     */
     @SerializedName("phone")
     private String phone;
 

@@ -3,30 +3,38 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * CalculatePriceResponse represents the calculated subscription price for a variant
+ * Calculated subscription price with discounts and billing cycle details.
  */
 public class CalculatePriceResponse {
+    /** Base price per billing cycle before discounts. */
     @SerializedName("base_price")
     private String basePrice;
 
+    /** Total number of billing cycles (null or 0 for unlimited). */
     @SerializedName("total_cycles")
     private Integer totalCycles;
 
+    /** Subtotal before discounts. */
     @SerializedName("subtotal_before_policy")
     private String subtotalBeforePolicy;
 
+    /** Discount amount applied by the selling plan. */
     @SerializedName("selling_plan_discount")
     private String sellingPlanDiscount;
 
+    /** Final subtotal after discounts. */
     @SerializedName("subtotal_after_policy")
     private String subtotalAfterPolicy;
 
+    /** Currency code. Currently only USD is supported. */
     @SerializedName("currency")
     private String currency;
 
+    /** Billing cycle frequency (e.g., "monthly", "yearly"). */
     @SerializedName("billing_cycle")
     private String billingCycle;
 
+    /** Trial period duration in days (0 or null for no trial). */
     @SerializedName("trial_period_days")
     private Integer trialPeriodDays;
 

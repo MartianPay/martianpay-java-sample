@@ -3,7 +3,53 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Event represents a webhook event sent to subscribed endpoints
+ * Event represents a webhook event sent to subscribed endpoints.
+ *
+ * Events are notifications sent by MartianPay when specific actions occur in your account.
+ * These events enable real-time integration and automation by notifying your application
+ * when important changes happen (e.g., payments received, invoices paid, refunds processed).
+ *
+ * Event delivery mechanism:
+ * - Events are sent as HTTP POST requests to your registered webhook endpoints
+ * - Each event includes a cryptographic signature for verification
+ * - Failed deliveries are automatically retried with exponential backoff
+ * - Events are delivered in near real-time after the triggering action
+ *
+ * Event structure:
+ * - Unique event ID for idempotency and tracking
+ * - Event type indicates what action triggered the event
+ * - Data payload contains the relevant object (invoice, payment, etc.)
+ * - Timestamp of when the event was created
+ * - API version used to generate the event structure
+ *
+ * Event categories:
+ * - Payment Intent events: payment_intent.created, payment_intent.succeeded, etc.
+ * - Invoice events: invoice.created, invoice.paid, invoice.payment_failed, etc.
+ * - Subscription events: subscription.created, subscription.updated, etc.
+ * - Refund events: refund.created, refund.succeeded, etc.
+ * - Payout events: payout.created, payout.succeeded, etc.
+ * - Payroll events: payroll.approved, payroll.completed, etc.
+ *
+ * Webhook signature verification:
+ * - All events include a Martian-Pay-Signature header
+ * - Signature uses HMAC-SHA256 with your webhook secret
+ * - Verify signatures to ensure events are from MartianPay
+ * - Reject events with invalid or missing signatures
+ *
+ * Best practices:
+ * - Always verify webhook signatures before processing
+ * - Return 200 OK quickly and process events asynchronously
+ * - Implement idempotency using the event ID
+ * - Handle duplicate event deliveries gracefully
+ * - Monitor pending_webhooks for delivery issues
+ * - Keep webhook endpoints secure (HTTPS only)
+ * - Log all received events for debugging and audit trails
+ *
+ * Error handling:
+ * - Return 200 status code to acknowledge receipt
+ * - Non-200 responses trigger automatic retries
+ * - Events are retried up to 3 days with exponential backoff
+ * - Check pending_webhooks to monitor undelivered events
  */
 public class Event {
     /** EventObject is the type identifier for event objects */
@@ -119,101 +165,207 @@ public class Event {
     /** SigningVersion represents the version of the signature we currently use */
     public static final String SIGNING_VERSION = "v1";
 
-    /** ID is the unique identifier for the event */
+    /**
+     * Unique identifier for this event.
+     * Format: evt_[random_id]
+     * Use this ID for idempotency to prevent processing the same event twice.
+     * Event IDs are immutable and globally unique across all events.
+     */
     @SerializedName("id")
     private String id;
 
-    /** Object is the type identifier, always "event" */
+    /**
+     * Type identifier for this object, always "event".
+     * Used to distinguish event objects from other API resource types.
+     */
     @SerializedName("object")
     private String object;
 
-    /** APIVersion is the API version used for this event */
+    /**
+     * The API version used to render this event's data.
+     * Events generated with different API versions may have different structures.
+     * Format: YYYY-MM-DD (e.g., "2025-01-22")
+     * This ensures you can process events according to the correct API schema.
+     */
     @SerializedName("api_version")
     private String apiVersion;
 
-    /** Created is the Unix timestamp when the event was created */
+    /**
+     * Unix timestamp (in seconds) when this event was created.
+     * Represents when the action occurred and the event was generated.
+     * Used for ordering events and implementing time-based processing logic.
+     */
     @SerializedName("created")
     private Long created;
 
-    /** Data contains the event payload */
+    /**
+     * The event payload containing the affected resource.
+     * This contains the actual data object (invoice, payment_intent, etc.) that triggered the event.
+     * The structure depends on the event type.
+     * For *.updated events, also includes previous_attributes showing what changed.
+     */
     @SerializedName("data")
     private EventData data;
 
-    /** Livemode indicates whether this event was created in live mode or test mode */
+    /**
+     * Indicates whether this event occurred in live mode or test mode.
+     * - true: Event occurred in production with real transactions
+     * - false: Event occurred in test mode with test data
+     * Always check this flag to avoid processing test events in production.
+     */
     @SerializedName("livemode")
     private Boolean livemode;
 
-    /** PendingWebhooks is the number of webhooks that haven't been successfully delivered */
+    /**
+     * Number of webhook deliveries that are still pending for this event.
+     * A high number indicates delivery issues with your webhook endpoints.
+     * Monitoring this helps identify webhook reliability problems.
+     * Count decreases as webhooks are successfully delivered or retries are exhausted.
+     */
     @SerializedName("pending_webhooks")
     private Long pendingWebhooks;
 
-    /** Type is the event type (e.g., "invoice.created" or "charge.refunded") */
+    /**
+     * The specific event type that occurred.
+     * Format: resource.action (e.g., "invoice.paid", "payment_intent.succeeded")
+     * Use this to determine which event handler to invoke.
+     * See EVENT_TYPE_* constants for all available event types.
+     */
     @SerializedName("type")
     private String type;
 
+    /**
+     * Creates a new Event instance.
+     */
     public Event() {
     }
 
+    // Getters and Setters
+
+    /**
+     * Gets the unique identifier for this event.
+     * @return The event ID
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the unique identifier for this event.
+     * @param id The event ID
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Gets the type identifier for this object.
+     * @return Always returns "event"
+     */
     public String getObject() {
         return object;
     }
 
+    /**
+     * Sets the type identifier for this object.
+     * @param object The object type (should be "event")
+     */
     public void setObject(String object) {
         this.object = object;
     }
 
+    /**
+     * Gets the API version used to render this event.
+     * @return The API version string in YYYY-MM-DD format
+     */
     public String getApiVersion() {
         return apiVersion;
     }
 
+    /**
+     * Sets the API version used to render this event.
+     * @param apiVersion The API version string
+     */
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
     }
 
+    /**
+     * Gets the Unix timestamp when this event was created.
+     * @return The creation timestamp in seconds
+     */
     public Long getCreated() {
         return created;
     }
 
+    /**
+     * Sets the Unix timestamp when this event was created.
+     * @param created The creation timestamp in seconds
+     */
     public void setCreated(Long created) {
         this.created = created;
     }
 
+    /**
+     * Gets the event data payload containing the affected resource.
+     * @return The EventData object with the resource and any previous attributes
+     */
     public EventData getData() {
         return data;
     }
 
+    /**
+     * Sets the event data payload.
+     * @param data The EventData object containing the resource
+     */
     public void setData(EventData data) {
         this.data = data;
     }
 
+    /**
+     * Gets whether this event occurred in live mode.
+     * @return true if live mode, false if test mode
+     */
     public Boolean getLivemode() {
         return livemode;
     }
 
+    /**
+     * Sets whether this event occurred in live mode.
+     * @param livemode true if live mode, false if test mode
+     */
     public void setLivemode(Boolean livemode) {
         this.livemode = livemode;
     }
 
+    /**
+     * Gets the number of pending webhook deliveries for this event.
+     * @return The count of undelivered webhooks
+     */
     public Long getPendingWebhooks() {
         return pendingWebhooks;
     }
 
+    /**
+     * Sets the number of pending webhook deliveries for this event.
+     * @param pendingWebhooks The count of undelivered webhooks
+     */
     public void setPendingWebhooks(Long pendingWebhooks) {
         this.pendingWebhooks = pendingWebhooks;
     }
 
+    /**
+     * Gets the specific event type that occurred.
+     * @return The event type in resource.action format (e.g., "invoice.paid")
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Sets the specific event type that occurred.
+     * @param type The event type string
+     */
     public void setType(String type) {
         this.type = type;
     }

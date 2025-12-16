@@ -5,54 +5,102 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ProductUpdateRequest updates an existing product
+ * Request to update an existing product. All fields are optional.
  */
 public class ProductUpdateRequest {
+    /**
+     * Updated name of the product.
+     */
     @SerializedName("name")
     private String name;
 
+    /**
+     * Updated base price of the product.
+     */
     @SerializedName("price")
     private AssetAmount price;
 
+    /**
+     * Updated fixed price of the product.
+     */
     @SerializedName("fixed_price")
     private AssetAmount fixedPrice;
 
+    /**
+     * Updated product description.
+     */
     @SerializedName("description")
     private String description;
 
+    /**
+     * Updated tax code for automated tax calculation.
+     */
     @SerializedName("tax_code")
     private String taxCode;
 
+    /**
+     * Updated metadata key-value pairs.
+     */
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
+    /**
+     * Updated default currency code. Currently only USD is supported.
+     */
     @SerializedName("default_currency")
     private String defaultCurrency;
 
+    /**
+     * Updated ordered list of media IDs.
+     */
     @SerializedName("media_order")
     private List<String> mediaOrder;
 
+    /**
+     * Updated shipping address collection setting.
+     */
     @SerializedName("collect_shipping_address")
     private Boolean collectShippingAddress;
 
+    /**
+     * Updated tax address collection setting.
+     */
     @SerializedName("collect_tax_address")
     private Boolean collectTaxAddress;
 
+    /**
+     * Updated selling plan requirement.
+     */
     @SerializedName("requires_selling_plan")
     private Boolean requiresSellingPlan;
 
+    /**
+     * Updated list of product options.
+     */
     @SerializedName("options")
     private List<ProductOption> options;
 
+    /**
+     * Updated list of product variants.
+     */
     @SerializedName("variants")
     private List<ProductVariant> variants;
 
+    /**
+     * Updated active status.
+     */
     @SerializedName("active")
     private Boolean active;
 
+    /**
+     * Updated list of selling plan group IDs.
+     */
     @SerializedName("selling_plan_group_ids")
     private List<String> sellingPlanGroupIDs;
 
+    /**
+     * Version number for optimistic locking.
+     */
     @SerializedName("version")
     private Long version;
 

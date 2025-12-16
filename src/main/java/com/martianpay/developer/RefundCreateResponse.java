@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * RefundCreateResponse represents the response containing newly created refunds
+ * Response containing newly created refund transactions.
  */
 public class RefundCreateResponse {
+    /** List of newly created refunds. */
     @SerializedName("refunds")
     private List<Refund> refunds;
 

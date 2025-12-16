@@ -4,29 +4,29 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * UpdateSellingPlanGroupRequest represents a request to update an existing selling plan group
+ * Request to update an existing selling plan group.
  */
 public class UpdateSellingPlanGroupRequest {
     /**
-     * Name is the name of the selling plan group
+     * Name of the selling plan group.
      */
     @SerializedName("name")
     private String name;
 
     /**
-     * Description is the description of the selling plan group
+     * Description of the selling plan group.
      */
     @SerializedName("description")
     private String description;
 
     /**
-     * Options is the list of option names for the selling plan group
+     * List of option names for the selling plan group.
      */
     @SerializedName("options")
     private List<String> options;
 
     /**
-     * Status is the current status ("active" | "disabled")
+     * Current status ("active" or "disabled").
      */
     @SerializedName("status")
     private String status;

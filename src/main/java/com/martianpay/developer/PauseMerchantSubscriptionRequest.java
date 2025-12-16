@@ -2,12 +2,24 @@ package com.martianpay.developer;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Request to pause a merchant-managed subscription.
+ */
 public class PauseMerchantSubscriptionRequest {
+    /**
+     * Unique identifier of the subscription to pause.
+     */
     private String subscriptionId;
 
+    /**
+     * Defines how to handle billing during pause.
+     */
     @SerializedName("behavior")
     private String behavior;
 
+    /**
+     * Unix timestamp (in seconds) when the subscription should resume.
+     */
     @SerializedName("resumes_at")
     private Long resumesAt;
 

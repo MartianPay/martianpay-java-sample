@@ -3,18 +3,30 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * PaymentLinkListRequest lists payment links with filters
+ * Request to list payment links with optional filtering.
  */
 public class PaymentLinkListRequest {
+    /**
+     * Page number for pagination (zero-indexed).
+     */
     @SerializedName("page")
     private Integer page;
 
+    /**
+     * Number of payment links to return per page.
+     */
     @SerializedName("page_size")
     private Integer pageSize;
 
+    /**
+     * Filter by active status.
+     */
     @SerializedName("active")
     private Boolean active;
 
+    /**
+     * Filter by product ID.
+     */
     @SerializedName("product")
     private String product;
 

@@ -2,25 +2,49 @@ package com.martianpay.developer;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Request to list payouts with optional filtering.
+ */
 public class PayoutListRequest {
+    /**
+     * Page number for pagination (zero-indexed).
+     */
     @SerializedName("page")
     private Integer page;
 
+    /**
+     * Number of payouts to return per page.
+     */
     @SerializedName("page_size")
     private Integer pageSize;
 
+    /**
+     * Filter by payout status.
+     */
     @SerializedName("status")
     private String status;
 
+    /**
+     * Filter by merchant ID.
+     */
     @SerializedName("merchant_id")
     private String merchantId;
 
+    /**
+     * Filter by start time (Unix timestamp in seconds).
+     */
     @SerializedName("start_time")
     private Long startTime;
 
+    /**
+     * Filter by end time (Unix timestamp in seconds).
+     */
     @SerializedName("end_time")
     private Long endTime;
 
+    /**
+     * Filter by external ID.
+     */
     @SerializedName("external_id")
     private String externalId;
 

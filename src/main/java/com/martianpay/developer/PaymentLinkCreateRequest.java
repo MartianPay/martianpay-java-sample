@@ -5,21 +5,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * PaymentLinkCreateRequest creates a new payment link
+ * Request to create a new payment link.
  */
 public class PaymentLinkCreateRequest {
+    /**
+     * Product ID to be sold through this payment link.
+     */
     @SerializedName("product_id")
     private String productID;
 
+    /**
+     * Default variant ID pre-selected when customers open the link.
+     */
     @SerializedName("default_variant_id")
     private String defaultVariantID;
 
+    /**
+     * List of primary variant IDs available for selection.
+     */
     @SerializedName("primary_variant_ids")
     private List<String> primaryVariantIDs;
 
+    /**
+     * List of addon variant configurations.
+     */
     @SerializedName("addon_variants")
     private List<PaymentLinkAddonVariantRequest> addonVariants;
 
+    /**
+     * Custom configuration for variant display and behavior.
+     */
     @SerializedName("variant_config")
     private Map<String, Object> variantConfig;
 
@@ -41,15 +56,24 @@ public class PaymentLinkCreateRequest {
 }
 
 /**
- * PaymentLinkAddonVariantRequest represents addon variant configuration
+ * Configuration for addon variants in a payment link.
  */
 class PaymentLinkAddonVariantRequest {
+    /**
+     * Variant ID that can be added as an addon.
+     */
     @SerializedName("variant_id")
     private String variantID;
 
+    /**
+     * Minimum quantity of this addon that can be selected.
+     */
     @SerializedName("min_quantity")
     private Integer minQuantity;
 
+    /**
+     * Maximum quantity of this addon that can be selected.
+     */
     @SerializedName("max_quantity")
     private Integer maxQuantity;
 

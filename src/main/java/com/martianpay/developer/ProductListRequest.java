@@ -3,15 +3,24 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * ProductListRequest lists products with filters
+ * Request to list products with optional filtering.
  */
 public class ProductListRequest {
+    /**
+     * Page number for pagination (zero-indexed).
+     */
     @SerializedName("page")
     private Integer page;
 
+    /**
+     * Number of products to return per page.
+     */
     @SerializedName("page_size")
     private Integer pageSize;
 
+    /**
+     * Filter by active status.
+     */
     @SerializedName("active")
     private Boolean active;
 

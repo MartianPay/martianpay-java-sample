@@ -3,78 +3,55 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Payroll represents a payroll batch
+ * Batch payment operation for distributing funds to multiple recipients.
+ * Status lifecycle: created -> pending -> executing -> completed/failed/canceled.
  */
 public class Payroll {
-    /**
-     * ID is the unique identifier for the payroll
-     */
+    /** Unique identifier for the payroll batch (format: payroll_[random_id]). */
     @SerializedName("id")
     private String id;
 
-    /**
-     * CreatedAt is the Unix timestamp when the payroll was created
-     */
+    /** Unix timestamp when the payroll was created. */
     @SerializedName("created_at")
     private Long createdAt;
 
-    /**
-     * UpdatedAt is the Unix timestamp when the payroll was last updated
-     */
+    /** Unix timestamp when the payroll was last updated. */
     @SerializedName("updated_at")
     private Long updatedAt;
 
-    /**
-     * CanceledAt is the Unix timestamp when the payroll was canceled, if applicable
-     */
+    /** Unix timestamp when the payroll was canceled (null if not canceled). */
     @SerializedName("canceled_at")
     private Long canceledAt;
 
-    /**
-     * MerchantID is the ID of the merchant who created the payroll
-     */
+    /** Merchant ID who created this payroll. */
     @SerializedName("merchant_id")
     private String merchantID;
 
-    /**
-     * ExternalID is the external ID for idempotency
-     */
+    /** External reference ID for idempotency and tracking. */
     @SerializedName("external_id")
     private String externalID;
 
-    /**
-     * ApprovalStatus is the current approval status of the payroll
-     */
+    /** Approval status (pending, approved, rejected, or null). */
     @SerializedName("approval_status")
     private String approvalStatus;
 
-    /**
-     * Status is the current processing status of the payroll
-     */
+    /** Processing status (created, pending, executing, completed, failed, canceled). */
     @SerializedName("status")
     private String status;
 
-    /**
-     * TotalItemNum is the total number of items in the payroll
-     */
+    /** Total number of payment items in this batch. */
     @SerializedName("total_item_num")
     private Long totalItemNum;
 
-    /**
-     * TotalAmount is the total amount to be paid in the payroll
-     */
+    /** Total amount to be paid across all items (before fees). */
     @SerializedName("total_amount")
     private String totalAmount;
 
-    /**
-     * TotalServiceFee is the total service fee for the payroll
-     */
+    /** Total service fee for processing the payroll batch. */
     @SerializedName("total_service_fee")
     private String totalServiceFee;
 
-    /**
-     * Currency is the currency used for the payroll
-     */
+    /** Currency used for all payments (e.g., "USDT", "USDC"). Currently only USD is supported. */
     @SerializedName("currency")
     private String currency;
 

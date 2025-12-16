@@ -5,95 +5,95 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * PaymentIntentCreateRequest represents a request to create a new payment intent
+ * Request to create a new payment intent.
  */
 public class PaymentIntentCreateRequest {
     /**
-     * Amount is the amount to be charged in the specified currency (required for traditional mode, optional for payment link mode)
+     * Amount to be charged. Currently only USD is supported.
      */
     @SerializedName("amount")
     private String amount;
 
     /**
-     * Currency is the ISO 4217 currency code (required for traditional mode, optional for payment link mode)
+     * Currency code (ISO 4217). Currently only USD is supported.
      */
     @SerializedName("currency")
     private String currency;
 
     /**
-     * Customer is the identifier of the customer this payment intent belongs to
+     * Customer identifier.
      */
     @SerializedName("customer")
     private String customer;
 
     /**
-     * Description is an arbitrary string attached to the object, often useful for displaying to users
+     * Description of the payment.
      */
     @SerializedName("description")
     private String description;
 
     /**
-     * Metadata is a set of key-value pairs that you can attach to the object
+     * Custom key-value pairs for additional data.
      */
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
     /**
-     * MerchantOrderId is an optional unique identifier for the order on the merchant's side (must be unique per merchant if provided)
+     * Unique identifier for the order on the merchant's side.
      */
     @SerializedName("merchant_order_id")
     private String merchantOrderId;
 
     /**
-     * ReceiptEmail is the email address to send the receipt to
+     * Email address to send the receipt to.
      */
     @SerializedName("receipt_email")
     private String receiptEmail;
 
     /**
-     * ReturnURL is the URL to redirect the customer to after payment
+     * URL to redirect the customer to after payment.
      */
     @SerializedName("return_url")
     private String returnUrl;
 
     /**
-     * PaymentMethodID is the ID of a saved payment method to use for this payment (Stripe only)
+     * ID of a saved payment method to use.
      */
     @SerializedName("payment_method_id")
     private String paymentMethodId;
 
     /**
-     * PaymentLinkID is the optional ID of the payment link used to create this payment intent
+     * Payment link ID used to create this payment intent.
      */
     @SerializedName("payment_link_id")
     private String paymentLinkId;
 
     /**
-     * ProductVersion is the optional version of the product catalog to use
+     * Version of the product catalog to use.
      */
     @SerializedName("product_version")
     private Long productVersion;
 
     /**
-     * PrimaryVariant is the optional primary variant selection
+     * Primary variant selection.
      */
     @SerializedName("primary_variant")
     private VariantSelectionRequest primaryVariant;
 
     /**
-     * Addons is the optional list of addon variant selections
+     * List of addon variant selections.
      */
     @SerializedName("addons")
     private List<VariantSelectionRequest> addons;
 
     /**
-     * ShippingAddress is the optional shipping address for the payment intent
+     * Shipping address for the payment intent.
      */
     @SerializedName("shipping_address")
     private PaymentIntentShippingAddress shippingAddress;
 
     /**
-     * TaxRegion is the optional tax jurisdiction for the payment intent
+     * Tax jurisdiction for the payment intent.
      */
     @SerializedName("tax_region")
     private PaymentIntentTaxRegion taxRegion;

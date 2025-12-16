@@ -50,9 +50,7 @@ public class Product {
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
-    /**
-     * DefaultCurrency is the base currency for the product/variants
-     */
+    /** DefaultCurrency is the base currency for the product/variants. Currently only USD is supported. */
     @SerializedName("default_currency")
     private String defaultCurrency;
 

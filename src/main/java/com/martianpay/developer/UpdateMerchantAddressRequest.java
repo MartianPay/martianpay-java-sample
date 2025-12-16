@@ -3,9 +3,12 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * UpdateMerchantAddressRequest updates a merchant address
+ * Request to update merchant's cryptocurrency address configuration.
  */
 public class UpdateMerchantAddressRequest {
+    /**
+     * New alias (friendly name) for the merchant address.
+     */
     @SerializedName("alias")
     private String alias;
 

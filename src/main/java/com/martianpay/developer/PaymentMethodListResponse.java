@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * PaymentMethodListResponse represents the response for listing payment methods
+ * List of saved payment methods for a customer.
  */
 public class PaymentMethodListResponse {
+    /** List of saved payment methods. */
     @SerializedName("payment_methods")
     private List<PaymentMethodCard> paymentMethods;
 

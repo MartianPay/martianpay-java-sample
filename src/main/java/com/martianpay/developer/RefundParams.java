@@ -4,35 +4,41 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 /**
- * RefundParams contains parameters for creating a refund
+ * Parameters for creating a refund to return funds to customers for previously successful payments.
+ * Supports full or partial refunds with customizable metadata and reason codes.
  */
 public class RefundParams {
     /**
-     * Amount is the amount to refund in the smallest currency unit
+     * The amount to refund in the smallest currency unit (e.g., cents for fiat, smallest token unit for crypto).
+     * Must not exceed the remaining refundable amount.
      */
     @SerializedName("amount")
     private String amount;
 
     /**
-     * Metadata is additional metadata to attach to the refund
+     * Key-value pairs for storing additional information about the refund.
+     * Useful for tracking RMA numbers, support tickets, and audit trails.
      */
     @SerializedName("metadata")
     private Map<String, String> metadata;
 
     /**
-     * PaymentIntent is the ID of payment intent to refund
+     * The ID of the payment intent to refund (e.g., "pi_abc123xyz").
+     * Payment must be successful and have refundable amount remaining.
      */
     @SerializedName("payment_intent_id")
     private String paymentIntent;
 
     /**
-     * Reason is the reason for the refund
+     * Reason code for the refund (e.g., "duplicate", "fraudulent", "requested_by_customer").
+     * Helps categorize and analyze refund patterns for reporting and analytics.
      */
     @SerializedName("reason")
     private String reason;
 
     /**
-     * Description is the description of the refund
+     * Human-readable description explaining the refund reason to staff and customers.
+     * Should include relevant order details and any special circumstances.
      */
     @SerializedName("description")
     private String description;

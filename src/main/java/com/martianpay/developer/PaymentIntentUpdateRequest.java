@@ -3,23 +3,23 @@ package com.martianpay.developer;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * PaymentIntentUpdateRequest confirms payment intent with payment method
+ * Request to confirm payment intent with payment method.
  */
 public class PaymentIntentUpdateRequest {
     /**
-     * PaymentMethodType is the type of payment method being used
+     * Type of payment method being used.
      */
     @SerializedName("payment_method_type")
     private String paymentMethodType;
 
     /**
-     * PaymentMethodData contains the payment method confirmation options
+     * Payment method confirmation options.
      */
     @SerializedName("payment_method_options")
     private PaymentMethodConfirmOptions paymentMethodData;
 
     /**
-     * SaveCustomer indicates whether to save the customer information for future use
+     * Whether to save the customer information for future use.
      */
     @SerializedName("save_customer")
     private Boolean saveCustomer;

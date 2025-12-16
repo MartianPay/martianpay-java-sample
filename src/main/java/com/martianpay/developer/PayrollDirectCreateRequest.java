@@ -4,23 +4,23 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * PayrollDirectCreateRequest creates a payroll directly without CSV upload
+ * Request to create a payroll directly without CSV upload.
  */
 public class PayrollDirectCreateRequest {
     /**
-     * ExternalID is the external ID for idempotency
+     * External ID for idempotency.
      */
     @SerializedName("external_id")
     private String externalId;
 
     /**
-     * Items is the list of payroll recipients
+     * List of payroll recipients.
      */
     @SerializedName("items")
     private List<PayrollDirectItem> items;
 
     /**
-     * AutoApprove indicates whether to automatically approve the payroll
+     * Whether to automatically approve the payroll.
      */
     @SerializedName("auto_approve")
     private Boolean autoApprove;
