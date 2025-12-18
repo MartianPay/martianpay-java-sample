@@ -5,6 +5,7 @@ import com.martianpay.developer.ListSubscriptionsResponse;
 import com.martianpay.developer.SubscriptionDetails;
 import com.martianpay.developer.CancelMerchantSubscriptionRequest;
 import com.martianpay.developer.PauseMerchantSubscriptionRequest;
+import com.martianpay.developer.UpdateSubscriptionPlanRequest;
 
 import java.io.IOException;
 
@@ -80,5 +81,44 @@ public class SubscriptionService extends MartianPayClient {
     public SubscriptionDetails resumeSubscription(String subscriptionID) throws IOException {
         String path = String.format("/v1/subscriptions/%s/resume", subscriptionID);
         return sendRequest("POST", path, null, SubscriptionDetails.class);
+    }
+
+    /**
+     * Updates a subscription's plan (upgrade or downgrade)
+     *
+     * For upgrades (new price > current price):
+     * - Applied immediately
+     * - Customer charged prorated difference today
+     * - Billing cycle can be reset with billing_cycle_anchor: "now"
+     *
+     * For downgrades (new price < current price):
+     * - Scheduled as pending update
+     * - Takes effect at end of current billing period
+     * - Customer continues on current plan until effective_date
+     *
+     * @param subscriptionID Subscription ID
+     * @param params Update parameters including new selling plan, proration behavior, etc.
+     * @return Updated subscription details with proration info
+     * @throws IOException if request fails
+     */
+    public SubscriptionDetails updateSubscription(String subscriptionID, UpdateSubscriptionPlanRequest params) throws IOException {
+        String path = String.format("/v1/subscriptions/%s", subscriptionID);
+        return sendRequest("POST", path, params, SubscriptionDetails.class);
+    }
+
+    /**
+     * Previews a subscription plan change without applying it
+     *
+     * Use this to show customers what they'll be charged before confirming the change.
+     * The preview does NOT modify the subscription, create invoices, or charge the customer.
+     *
+     * @param subscriptionID Subscription ID
+     * @param params Preview parameters (same as updateSubscription)
+     * @return Preview with proration calculation (applied=false)
+     * @throws IOException if request fails
+     */
+    public SubscriptionDetails previewSubscriptionUpdate(String subscriptionID, UpdateSubscriptionPlanRequest params) throws IOException {
+        String path = String.format("/v1/subscriptions/%s/preview", subscriptionID);
+        return sendRequest("POST", path, params, SubscriptionDetails.class);
     }
 }

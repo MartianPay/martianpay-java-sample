@@ -538,6 +538,212 @@ public class SubscriptionExample {
         }
     }
 
+    // Update subscription plan (upgrade or downgrade)
+    public static void updateSubscription(MartianPayClient client) {
+        System.out.println("Updating Subscription Plan...");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter Subscription ID: ");
+        String id = scanner.nextLine().trim();
+        if (id.isEmpty()) {
+            System.out.println("✗ Subscription ID is required");
+            return;
+        }
+
+        System.out.print("Enter new Selling Plan ID: ");
+        String sellingPlanId = scanner.nextLine().trim();
+        if (sellingPlanId.isEmpty()) {
+            System.out.println("✗ Selling Plan ID is required");
+            return;
+        }
+
+        System.out.println("\nProration behaviors:");
+        System.out.println("  1. always_invoice - Create and charge proration invoice immediately (recommended for upgrades)");
+        System.out.println("  2. create_prorations - Add proration items to next invoice");
+        System.out.println("  3. none - No proration calculation");
+        System.out.print("\nSelect behavior (1-3, default: 1): ");
+
+        String behaviorChoice = scanner.nextLine().trim();
+
+        String prorationBehavior = UpdateSubscriptionPlanRequest.PRORATION_ALWAYS_INVOICE;
+        switch (behaviorChoice) {
+            case "2":
+                prorationBehavior = UpdateSubscriptionPlanRequest.PRORATION_CREATE_PRORATIONS;
+                break;
+            case "3":
+                prorationBehavior = UpdateSubscriptionPlanRequest.PRORATION_NONE;
+                break;
+        }
+
+        System.out.println("\nBilling cycle anchor:");
+        System.out.println("  1. now - Reset billing cycle to today");
+        System.out.println("  2. unchanged - Keep existing billing cycle");
+        System.out.print("\nSelect option (1-2, default: 2): ");
+
+        String anchorChoice = scanner.nextLine().trim();
+
+        String billingCycleAnchor = UpdateSubscriptionPlanRequest.BILLING_ANCHOR_UNCHANGED;
+        if (anchorChoice.equals("1")) {
+            billingCycleAnchor = UpdateSubscriptionPlanRequest.BILLING_ANCHOR_NOW;
+        }
+
+        UpdateSubscriptionPlanRequest req = new UpdateSubscriptionPlanRequest();
+        req.setPrimaryVariant(new SubscriptionItemUpdate(sellingPlanId));
+        req.setProrationBehavior(prorationBehavior);
+        req.setBillingCycleAnchor(billingCycleAnchor);
+
+        try {
+            SubscriptionDetails response = client.getSubscriptionService().updateSubscription(id, req);
+
+            System.out.println("\n✓ Subscription Updated:");
+            System.out.printf("  ID: %s%n", response.getId());
+            System.out.printf("  Status: %s%n", response.getStatus());
+
+            if (response.getApplied() != null && response.getApplied()) {
+                System.out.println("  ✓ Change Applied Immediately");
+            } else {
+                System.out.println("  ⏳ Change Scheduled");
+            }
+
+            if (response.getIsUpgrade() != null) {
+                if (response.getIsUpgrade()) {
+                    System.out.println("  Change Type: Upgrade");
+                } else {
+                    System.out.println("  Change Type: Downgrade");
+                }
+            }
+
+            if (response.getEffectiveDate() != null) {
+                System.out.printf("  Effective Date: %s%n", formatTimestamp(response.getEffectiveDate()));
+            }
+
+            if (response.getChargeToday() != null && !response.getChargeToday().isEmpty() && !response.getChargeToday().equals("0")) {
+                System.out.printf("  Charge Today: $%s%n", response.getChargeToday());
+            }
+
+            if (response.getProrationCredit() != null && !response.getProrationCredit().isEmpty()) {
+                System.out.printf("  Proration Credit: $%s%n", response.getProrationCredit());
+            }
+
+            // Show proration details
+            if (response.getProrationDetails() != null) {
+                ProrationDetails pd = response.getProrationDetails();
+                System.out.println("\n  Proration Details:");
+                System.out.printf("    Current Price: %s cents%n", pd.getCurrentPrice());
+                System.out.printf("    Target Price: %s cents%n", pd.getTargetPrice());
+                System.out.printf("    Days Remaining: %d / %d%n", pd.getDaysRemaining(), pd.getTotalDays());
+                System.out.printf("    Credit Amount: %s cents%n", pd.getCreditedAmount());
+                System.out.printf("    Charge Amount: %s cents%n", pd.getChargedAmount());
+                System.out.printf("    Net Amount: %s cents%n", pd.getNetAmount());
+            }
+
+            // Show pending update if downgrade
+            if (response.getPendingUpdate() != null) {
+                SubscriptionPendingUpdate pu = response.getPendingUpdate();
+                System.out.println("\n  Pending Update (Scheduled Downgrade):");
+                if (pu.getTargetSellingPlanName() != null) {
+                    System.out.printf("    Target Plan: %s%n", pu.getTargetSellingPlanName());
+                }
+                System.out.printf("    Effective Date: %s%n", formatTimestamp(pu.getEffectiveDate()));
+                if (pu.getNextChargeAmount() != null) {
+                    System.out.printf("    Next Charge: $%s%n", pu.getNextChargeAmount());
+                }
+            }
+
+            if (response.getNextChargeAmount() != null) {
+                System.out.printf("\n  Next Charge: %s%n", response.getNextChargeAmountDisplay());
+            }
+            if (response.getNextChargeDate() != null) {
+                System.out.printf("  Next Charge Date: %s%n", formatTimestamp(response.getNextChargeDate()));
+            }
+        } catch (IOException e) {
+            System.out.printf("✗ API Error: %s%n", e.getMessage());
+        }
+    }
+
+    // Preview subscription plan change without applying it
+    public static void previewSubscriptionUpdate(MartianPayClient client) {
+        System.out.println("Previewing Subscription Plan Change...");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter Subscription ID: ");
+        String id = scanner.nextLine().trim();
+        if (id.isEmpty()) {
+            System.out.println("✗ Subscription ID is required");
+            return;
+        }
+
+        System.out.print("Enter new Selling Plan ID to preview: ");
+        String sellingPlanId = scanner.nextLine().trim();
+        if (sellingPlanId.isEmpty()) {
+            System.out.println("✗ Selling Plan ID is required");
+            return;
+        }
+
+        UpdateSubscriptionPlanRequest req = new UpdateSubscriptionPlanRequest();
+        req.setPrimaryVariant(new SubscriptionItemUpdate(sellingPlanId));
+        req.setProrationBehavior(UpdateSubscriptionPlanRequest.PRORATION_ALWAYS_INVOICE);
+        req.setBillingCycleAnchor(UpdateSubscriptionPlanRequest.BILLING_ANCHOR_UNCHANGED);
+
+        try {
+            SubscriptionDetails response = client.getSubscriptionService().previewSubscriptionUpdate(id, req);
+
+            System.out.println("\n✓ Subscription Plan Change Preview:");
+            System.out.println("  (No changes have been made - this is a preview only)\n");
+            System.out.printf("  Subscription ID: %s%n", response.getId());
+            System.out.printf("  Current Status: %s%n", response.getStatus());
+
+            if (response.getIsUpgrade() != null) {
+                if (response.getIsUpgrade()) {
+                    System.out.println("\n  This would be an UPGRADE");
+                } else {
+                    System.out.println("\n  This would be a DOWNGRADE");
+                }
+            }
+
+            if (response.getEffectiveDate() != null) {
+                System.out.printf("  Effective Date: %s%n", formatTimestamp(response.getEffectiveDate()));
+            }
+
+            // Show what would be charged
+            System.out.println("\n  Billing Preview:");
+            if (response.getChargeToday() != null && !response.getChargeToday().isEmpty() && !response.getChargeToday().equals("0")) {
+                System.out.printf("    Would Charge Today: $%s%n", response.getChargeToday());
+            } else {
+                System.out.println("    Would Charge Today: $0.00 (no immediate charge)");
+            }
+
+            if (response.getProrationCredit() != null && !response.getProrationCredit().isEmpty()) {
+                System.out.printf("    Proration Credit: $%s%n", response.getProrationCredit());
+            }
+
+            // Show proration details
+            if (response.getProrationDetails() != null) {
+                ProrationDetails pd = response.getProrationDetails();
+                System.out.println("\n  Proration Calculation:");
+                System.out.printf("    Current Price: %s cents%n", pd.getCurrentPrice());
+                System.out.printf("    Target Price: %s cents%n", pd.getTargetPrice());
+                System.out.printf("    Days Remaining: %d / %d total days%n", pd.getDaysRemaining(), pd.getTotalDays());
+                System.out.printf("    Credit (unused time): %s cents%n", pd.getCreditedAmount());
+                System.out.printf("    Charge (new plan): %s cents%n", pd.getChargedAmount());
+                System.out.printf("    Net Amount: %s cents%n", pd.getNetAmount());
+            }
+
+            // Show future billing info
+            if (response.getNextChargeAmount() != null) {
+                System.out.println("\n  Future Billing:");
+                System.out.printf("    Next Charge Amount: %s%n", response.getNextChargeAmountDisplay());
+            }
+            if (response.getNextChargeDate() != null) {
+                System.out.printf("    Next Charge Date: %s%n", formatTimestamp(response.getNextChargeDate()));
+            }
+
+            System.out.println("\n  Note: Use 'Update Subscription' to apply this change.");
+        } catch (IOException e) {
+            System.out.printf("✗ API Error: %s%n", e.getMessage());
+        }
+    }
+
     // Format Unix timestamp to human-readable format
     private static String formatTimestamp(Long timestamp) {
         if (timestamp == null) {

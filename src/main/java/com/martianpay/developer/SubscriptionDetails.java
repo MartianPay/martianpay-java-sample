@@ -154,6 +154,37 @@ public class SubscriptionDetails {
     @SerializedName("payment_method_last4")
     private String paymentMethodLast4;
 
+    // Proration fields (populated for update/preview operations)
+    @SerializedName("pending_update")
+    private SubscriptionPendingUpdate pendingUpdate;
+
+    @SerializedName("proration_behavior")
+    private String prorationBehavior;
+
+    @SerializedName("proration_date")
+    private Long prorationDate;
+
+    @SerializedName("applied")
+    private Boolean applied;
+
+    @SerializedName("is_upgrade")
+    private Boolean isUpgrade;
+
+    @SerializedName("effective_date")
+    private Long effectiveDate;
+
+    @SerializedName("proration_credit")
+    private String prorationCredit;
+
+    @SerializedName("charge_today")
+    private String chargeToday;
+
+    @SerializedName("next_charge_date")
+    private Long nextChargeDate;
+
+    @SerializedName("proration_details")
+    private ProrationDetails prorationDetails;
+
     public SubscriptionDetails() {
     }
 
@@ -555,5 +586,85 @@ public class SubscriptionDetails {
 
     public void setPaymentMethodLast4(String paymentMethodLast4) {
         this.paymentMethodLast4 = paymentMethodLast4;
+    }
+
+    public SubscriptionPendingUpdate getPendingUpdate() {
+        return pendingUpdate;
+    }
+
+    public void setPendingUpdate(SubscriptionPendingUpdate pendingUpdate) {
+        this.pendingUpdate = pendingUpdate;
+    }
+
+    public String getProrationBehavior() {
+        return prorationBehavior;
+    }
+
+    public void setProrationBehavior(String prorationBehavior) {
+        this.prorationBehavior = prorationBehavior;
+    }
+
+    public Long getProrationDate() {
+        return prorationDate;
+    }
+
+    public void setProrationDate(Long prorationDate) {
+        this.prorationDate = prorationDate;
+    }
+
+    public Boolean getApplied() {
+        return applied;
+    }
+
+    public void setApplied(Boolean applied) {
+        this.applied = applied;
+    }
+
+    public Boolean getIsUpgrade() {
+        return isUpgrade;
+    }
+
+    public void setIsUpgrade(Boolean isUpgrade) {
+        this.isUpgrade = isUpgrade;
+    }
+
+    public Long getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(Long effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    public String getProrationCredit() {
+        return prorationCredit;
+    }
+
+    public void setProrationCredit(String prorationCredit) {
+        this.prorationCredit = prorationCredit;
+    }
+
+    public String getChargeToday() {
+        return chargeToday;
+    }
+
+    public void setChargeToday(String chargeToday) {
+        this.chargeToday = chargeToday;
+    }
+
+    public Long getNextChargeDate() {
+        return nextChargeDate;
+    }
+
+    public void setNextChargeDate(Long nextChargeDate) {
+        this.nextChargeDate = nextChargeDate;
+    }
+
+    public ProrationDetails getProrationDetails() {
+        return prorationDetails;
+    }
+
+    public void setProrationDetails(ProrationDetails prorationDetails) {
+        this.prorationDetails = prorationDetails;
     }
 }

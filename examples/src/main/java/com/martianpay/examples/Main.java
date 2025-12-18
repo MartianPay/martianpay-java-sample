@@ -260,7 +260,9 @@ public class Main {
                             "Cancel Subscription Immediately",
                             "Pause Subscription",
                             "Pause Subscription with Auto-Resume",
-                            "Resume Subscription"
+                            "Resume Subscription",
+                            "Update Subscription (Plan Change)",
+                            "Preview Subscription Update"
                     };
                     break;
                 case 12:
@@ -339,8 +341,8 @@ public class Main {
                 43, // Balance: 44-48
                 48, // Product: 49-66 (7 product + 11 selling plan)
                 66, // Payment Link: 67-73
-                73, // Subscription: 74-82 (9 examples)
-                82  // Webhook: 83
+                73, // Subscription: 74-84 (11 examples)
+                84  // Webhook: 85
         };
 
         return categoryOffsets[category - 1] + choice;
@@ -623,7 +625,7 @@ public class Main {
                     PaymentLinkExample.listPaymentLinksByProduct(client);
                     break;
 
-                // Subscription Examples (74-82)
+                // Subscription Examples (74-84)
                 case 74:
                     SubscriptionExample.listSubscriptions(client);
                     break;
@@ -651,9 +653,15 @@ public class Main {
                 case 82:
                     SubscriptionExample.resumeSubscription(client);
                     break;
-
-                // Webhook Examples (83)
                 case 83:
+                    SubscriptionExample.updateSubscription(client);
+                    break;
+                case 84:
+                    SubscriptionExample.previewSubscriptionUpdate(client);
+                    break;
+
+                // Webhook Examples (85)
+                case 85:
                     webhookExample.startWebhookServer();
                     break;
 
