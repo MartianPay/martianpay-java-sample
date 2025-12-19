@@ -7,6 +7,8 @@ import com.martianpay.developer.CustomerListRequest;
 import com.martianpay.developer.CustomerListResponse;
 import com.martianpay.developer.CustomerPaymentMethodListRequest;
 import com.martianpay.developer.PaymentMethodListResponse;
+import com.martianpay.developer.EphemeralTokenRequest;
+import com.martianpay.developer.EphemeralTokenResponse;
 
 import java.io.IOException;
 
@@ -92,5 +94,24 @@ public class CustomerService extends MartianPayClient {
         CustomerPaymentMethodListRequest request = new CustomerPaymentMethodListRequest();
         request.setCustomerID(customerID);
         return sendRequestWithQuery("GET", "/v1/customers/payment_methods", request, PaymentMethodListResponse.class);
+    }
+
+    /**
+     * Generates an ephemeral token for customer authentication in checkout flows.
+     * Ephemeral tokens allow social media integrations and third-party systems to authenticate customers
+     * without exposing long-lived credentials.
+     *
+     * The token is short-lived (typically 5-15 minutes) and can be used for:
+     * - Instagram/WhatsApp commerce integrations
+     * - Telegram bot payments
+     * - WeChat mini-program checkout flows
+     * - Any third-party system requiring temporary customer authentication
+     *
+     * @param request Request containing identity provider info (idp_key, idp_subject), provider, return URL, etc.
+     * @return Ephemeral token response with token and expiration time
+     * @throws IOException if request fails
+     */
+    public EphemeralTokenResponse generateEphemeralToken(EphemeralTokenRequest request) throws IOException {
+        return sendRequest("POST", "/v1/customers/ephemeral_token", request, EphemeralTokenResponse.class);
     }
 }
