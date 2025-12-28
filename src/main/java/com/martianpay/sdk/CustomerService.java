@@ -112,6 +112,6 @@ public class CustomerService extends MartianPayClient {
      * @throws IOException if request fails
      */
     public EphemeralTokenResponse generateEphemeralToken(EphemeralTokenRequest request) throws IOException {
-        return sendRequest("POST", "/v1/customers/ephemeral_token", request, EphemeralTokenResponse.class);
+        return sendRequest("POST", "/v1/customers/ephemeral_tokens", request, EphemeralTokenResponse.class);
     }
 }
