@@ -2,6 +2,7 @@ package com.martianpay.sdk;
 
 import com.martianpay.developer.Product;
 import com.martianpay.developer.ProductCreateRequest;
+import com.martianpay.developer.ProductGetRequest;
 import com.martianpay.developer.ProductListRequest;
 import com.martianpay.developer.ProductListResp;
 import com.martianpay.developer.ProductUpdateRequest;
@@ -51,8 +52,20 @@ public class ProductService extends MartianPayClient {
      * @throws IOException if request fails
      */
     public Product getProduct(String productID) throws IOException {
+        return getProduct(productID, null);
+    }
+
+    /**
+     * Retrieves product details with optional expand parameter
+     *
+     * @param productID Product ID
+     * @param params Optional query parameters (use null for defaults, or set expand="selling_plans" to include selling plan details)
+     * @return Product details
+     * @throws IOException if request fails
+     */
+    public Product getProduct(String productID, ProductGetRequest params) throws IOException {
         String path = String.format("/v1/products/%s", productID);
-        return sendRequest("GET", path, null, Product.class);
+        return sendRequestWithQuery("GET", path, params, Product.class);
     }
 
     /**

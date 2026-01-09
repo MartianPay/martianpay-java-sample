@@ -121,4 +121,18 @@ public class SubscriptionService extends MartianPayClient {
         String path = String.format("/v1/subscriptions/%s/preview", subscriptionID);
         return sendRequest("POST", path, params, SubscriptionDetails.class);
     }
+
+    /**
+     * Revokes a pending cancellation for a subscription.
+     * This is used when a subscription was previously scheduled to cancel (cancel_at_period_end=true)
+     * but the customer or merchant wants to continue the subscription.
+     *
+     * @param subscriptionID Subscription ID
+     * @return Updated subscription details with cancellation revoked
+     * @throws IOException if request fails
+     */
+    public SubscriptionDetails revokeCancelSubscription(String subscriptionID) throws IOException {
+        String path = String.format("/v1/subscriptions/%s/revoke-cancel", subscriptionID);
+        return sendRequest("POST", path, null, SubscriptionDetails.class);
+    }
 }
