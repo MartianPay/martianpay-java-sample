@@ -10,6 +10,14 @@ import java.util.Map;
  */
 public class EphemeralTokenRequest {
 
+    // Identity provider type constants
+    /** Identify customer by email address */
+    public static final String IDP_KEY_EMAIL = "email";
+    /** Identify customer by phone number */
+    public static final String IDP_KEY_PHONE = "phone";
+    /** Identify customer by UUID */
+    public static final String IDP_KEY_UUID = "uuid";
+
     /**
      * IDPKey is the identity provider type - determines how to identify the customer.
      * Valid values: "email", "phone", "uuid"

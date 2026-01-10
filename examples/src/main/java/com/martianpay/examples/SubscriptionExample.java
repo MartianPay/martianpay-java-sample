@@ -13,6 +13,27 @@ import java.util.Scanner;
  */
 public class SubscriptionExample {
 
+    // Shared Scanner instance to avoid resource leak
+    private static final Scanner scanner = new Scanner(System.in);
+
+    // Thread-safe date formatter (SimpleDateFormat is not thread-safe, but static examples run sequentially)
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * Format amount in cents to dollars display (e.g., "1234" cents -> "$12.34")
+     */
+    private static String formatCentsToDisplay(String cents) {
+        if (cents == null || cents.isEmpty()) {
+            return "$0.00";
+        }
+        try {
+            long centsValue = Long.parseLong(cents);
+            return String.format("$%.2f", centsValue / 100.0);
+        } catch (NumberFormatException e) {
+            return "$" + cents; // fallback if not a number
+        }
+    }
+
     // List all subscriptions
     public static void listSubscriptions(MartianPayClient client) {
         System.out.println("Listing Subscriptions...");
@@ -58,7 +79,7 @@ public class SubscriptionExample {
                 System.out.printf("    Current Period: %s - %s%n",
                     formatTimestamp(sub.getCurrentPeriodStart()),
                     formatTimestamp(sub.getCurrentPeriodEnd()));
-                if (sub.getCancelAtPeriodEnd()) {
+                if (Boolean.TRUE.equals(sub.getCancelAtPeriodEnd())) {
                     System.out.println("    ⚠️  Will cancel at period end");
                 }
                 if (sub.getPausedAt() != null) {
@@ -81,7 +102,6 @@ public class SubscriptionExample {
         System.out.println("  4. past_due - Payment failed");
         System.out.println("  5. canceled - Canceled");
 
-        Scanner scanner = new Scanner(System.in);
         System.out.print("\nSelect status (1-5): ");
         String choice = scanner.nextLine().trim();
 
@@ -174,7 +194,6 @@ public class SubscriptionExample {
     // List subscriptions for a specific customer
     public static void listSubscriptionsByCustomer(MartianPayClient client) {
         System.out.println("Listing Subscriptions by Customer...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Customer ID: ");
         String customerID = scanner.nextLine().trim();
@@ -224,7 +243,6 @@ public class SubscriptionExample {
     // Get details of a specific subscription
     public static void getSubscription(MartianPayClient client) {
         System.out.println("Getting Subscription...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -305,7 +323,7 @@ public class SubscriptionExample {
             }
 
             // Cancellation Information
-            if (response.getCancelAtPeriodEnd()) {
+            if (Boolean.TRUE.equals(response.getCancelAtPeriodEnd())) {
                 System.out.println("\n  ⚠️  Cancellation:");
                 System.out.printf("    Will cancel at: %s%n", formatTimestamp(response.getCurrentPeriodEnd()));
                 if (response.getCancelReason() != null) {
@@ -331,7 +349,6 @@ public class SubscriptionExample {
     // Cancel a subscription at the end of the current period
     public static void cancelSubscriptionAtPeriodEnd(MartianPayClient client) {
         System.out.println("Canceling Subscription at Period End...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -368,7 +385,6 @@ public class SubscriptionExample {
     // Cancel a subscription immediately
     public static void cancelSubscriptionImmediately(MartianPayClient client) {
         System.out.println("Canceling Subscription Immediately...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -413,7 +429,6 @@ public class SubscriptionExample {
     // Pause a subscription indefinitely
     public static void pauseSubscription(MartianPayClient client) {
         System.out.println("Pausing Subscription...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -458,7 +473,6 @@ public class SubscriptionExample {
     // Pause a subscription with automatic resumption
     public static void pauseSubscriptionWithAutoResume(MartianPayClient client) {
         System.out.println("Pausing Subscription with Auto-Resume...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -511,7 +525,6 @@ public class SubscriptionExample {
     // Resume a paused subscription
     public static void resumeSubscription(MartianPayClient client) {
         System.out.println("Resuming Subscription...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -541,7 +554,6 @@ public class SubscriptionExample {
     // Update subscription plan (upgrade or downgrade)
     public static void updateSubscription(MartianPayClient client) {
         System.out.println("Updating Subscription Plan...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -629,12 +641,12 @@ public class SubscriptionExample {
             if (response.getProrationDetails() != null) {
                 ProrationDetails pd = response.getProrationDetails();
                 System.out.println("\n  Proration Details:");
-                System.out.printf("    Current Price: %s cents%n", pd.getCurrentPrice());
-                System.out.printf("    Target Price: %s cents%n", pd.getTargetPrice());
+                System.out.printf("    Current Price: %s%n", formatCentsToDisplay(pd.getCurrentPrice()));
+                System.out.printf("    Target Price: %s%n", formatCentsToDisplay(pd.getTargetPrice()));
                 System.out.printf("    Days Remaining: %d / %d%n", pd.getDaysRemaining(), pd.getTotalDays());
-                System.out.printf("    Credit Amount: %s cents%n", pd.getCreditedAmount());
-                System.out.printf("    Charge Amount: %s cents%n", pd.getChargedAmount());
-                System.out.printf("    Net Amount: %s cents%n", pd.getNetAmount());
+                System.out.printf("    Credit Amount: %s%n", formatCentsToDisplay(pd.getCreditedAmount()));
+                System.out.printf("    Charge Amount: %s%n", formatCentsToDisplay(pd.getChargedAmount()));
+                System.out.printf("    Net Amount: %s%n", formatCentsToDisplay(pd.getNetAmount()));
             }
 
             // Show pending update if downgrade
@@ -664,7 +676,6 @@ public class SubscriptionExample {
     // Preview subscription plan change without applying it
     public static void previewSubscriptionUpdate(MartianPayClient client) {
         System.out.println("Previewing Subscription Plan Change...");
-        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter Subscription ID: ");
         String id = scanner.nextLine().trim();
@@ -744,13 +755,58 @@ public class SubscriptionExample {
         }
     }
 
+    // Revoke a pending cancellation
+    public static void revokeCancelSubscription(MartianPayClient client) {
+        System.out.println("Revoking Subscription Cancellation...");
+
+        System.out.print("Enter Subscription ID: ");
+        String id = scanner.nextLine().trim();
+        if (id.isEmpty()) {
+            System.out.println("✗ Subscription ID is required");
+            return;
+        }
+
+        try {
+            // First check if the subscription has a pending cancellation
+            SubscriptionDetails current = client.getSubscriptionService().getSubscription(id);
+            if (!Boolean.TRUE.equals(current.getCancelAtPeriodEnd())) {
+                System.out.println("\n⚠️  This subscription does not have a pending cancellation.");
+                System.out.println("  Use this method only for subscriptions scheduled to cancel at period end.");
+                return;
+            }
+
+            System.out.printf("\nSubscription %s is scheduled to cancel at %s%n",
+                id, formatTimestamp(current.getCurrentPeriodEnd()));
+            System.out.print("Revoke cancellation and continue subscription? (yes/no): ");
+            String confirm = scanner.nextLine().trim().toLowerCase();
+            if (!confirm.equals("yes")) {
+                System.out.println("  Cancelled");
+                return;
+            }
+
+            SubscriptionDetails response = client.getSubscriptionService().revokeCancelSubscription(id);
+
+            System.out.println("\n✓ Subscription Cancellation Revoked:");
+            System.out.printf("  ID: %s%n", response.getId());
+            System.out.printf("  Status: %s%n", response.getStatus());
+            System.out.printf("  Current Period: %s - %s%n",
+                formatTimestamp(response.getCurrentPeriodStart()),
+                formatTimestamp(response.getCurrentPeriodEnd()));
+            if (response.getNextChargeAmount() != null) {
+                System.out.printf("  Next Charge: %s%n", response.getNextChargeAmountDisplay());
+            }
+            System.out.println("\n  Note: Subscription will now continue billing as normal");
+        } catch (IOException e) {
+            System.out.printf("✗ API Error: %s%n", e.getMessage());
+        }
+    }
+
     // Format Unix timestamp to human-readable format
     private static String formatTimestamp(Long timestamp) {
         if (timestamp == null) {
             return "N/A";
         }
         Date date = new Date(timestamp * 1000);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return sdf.format(date);
+        return DATE_FORMAT.format(date);
     }
 }
